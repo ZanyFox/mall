@@ -1,0 +1,93 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+#        - id: mall-user
+#          uri: lb://mall-user
+#          predicates:
+#            - Path=/api/user/**
+#          filters:
+#            - RewritePath=/api/(?<segment>.*),/$\{segment}
+#
+#        - id: mall-order
+#          uri: lb://mall-order
+#          predicates:
+#            - Path=/api/order/**
+#          filters:
+#            - RewritePath=/api/(?<segment>.*),/$\{segment}
+#
+#        - id: mall-goods
+#          uri: lb://mall-goods
+#          predicates:
+#            - Path=/api/goods/**
+#          filters:
+#            - RewritePath=/api/(?<segment>.*),/$\{segment}
+#
+#        - id: mall-stock
+#          uri: lb://mall-stock
+#          predicates:
+#            - Path=/api/stock/**
+#          filters:
+#              - RewritePath=/api/(?<segment>.*),/$\{segment}
+#
+        - id: mall-coupon
+          uri: lb://mall-coupon-service
+          predicates:
+            - Path=/api/coupon/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+
+        - id: mall-search-web
+          uri: lb://mall-search-service
+          predicates:
+            - Host=search.mallmall.com
+
+        - id: mall-auth-web
+          uri: lb://mall-auth-service
+          predicates:
+            - Host=auth.mallmall.com
+
+        - id: mall-goods-web
+          uri: lb://mall-goods-service
+          predicates:
+            - Host=mallmall.com,www.mallmall.com,item.mallmall.com
+
+        - id: mall-cart-web
+          uri: lb://mall-cart-service
+          predicates:
+            - Host=cart.mallmall.com
+
+        - id: mall-order-web
+          uri: lb://mall-order-service
+          predicates:
+            - Host=order.mallmall.com
+
+        - id: mall-coupon-web
+          uri: lb://mall-coupon-service
+          predicates:
+            - Host=seckill.mallmall.com
+
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/**]':
+            # 允许哪些网站的跨域请求
+            allowedOrigins: "*"
+#              - "http://127.0.0.1:5501"
+#              - "http://www.leyou.com"
+            allowedMethods: # 允许的跨域ajax的请求方式
+              - "GET"
+              - "POST"
+              - "DELETE"
+              - "PUT"
+              - "OPTIONS"
+            allowedHeaders: "*" # 允许在请求中携带的头信息
+            allowCredentials: true # 是否允许携带cookie
+            maxAge: 360000 # 这次跨域检测的有效期
+  redis:
+    host: ${redis.host}
+    port: ${redis.port}
+    password: ${redis.password}
+
+
+

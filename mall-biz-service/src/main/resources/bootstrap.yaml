@@ -1,0 +1,26 @@
+server:
+  port: 8089
+spring:
+  application:
+    
+    name: @artifactId@
+  cloud:
+    nacos:
+      discovery:
+        # 这种写法可以从环境变量中读取NACOS_HOST和NACOS_PORT 如果读取不到 使用默认的
+        server-addr: ${NACOS_HOST:127.0.0.1}:${NACOS_PORT:8848}
+        username: nacos
+        password: nacos
+        namespace: @nacos.namespace@
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        file-extension: yaml
+        namespace: @nacos.namespace@
+        username: ${spring.cloud.nacos.discovery.username}
+        password: ${spring.cloud.nacos.discovery.password}
+        shared-configs:
+          - data-id: application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+            group: DEFAULT_GROUP
+            refresh: true
+  profiles:
+    active: @profiles.active@

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fz.mall.stock.mapper.WareSkuMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.fz.mall.stock.pojo.entity.WareSku">
+        <id column="id" property="id"/>
+        <result column="sku_id" property="skuId"/>
+        <result column="ware_id" property="wareId"/>
+        <result column="stock" property="stock"/>
+        <result column="sku_name" property="skuName"/>
+        <result column="stock_locked" property="stockLocked"/>
+    </resultMap>
+
+    <update id="updateStock">
+        UPDATE mall_wms.wms_ware_sku
+        SET stock = stock + #{skuNum}
+        WHERE sku_id = #{skuId}
+          AND ware_id = #{wareId}
+    </update>
+
+    <update id="updateStockLock">
+        UPDATE wms_ware_sku
+        SET stock_locked = stock_locked + #{quantity}
+        WHERE ware_id = #{wareId}
+          AND sku_id = #{skuId}
+          AND stock - stock_locked >= #{quantity};
+    </update>
+
+
+    <update id="updateStockUnlock">
+        UPDATE wms_ware_sku
+        SET stock_locked =
+            stock_locked - #{wareOrderTaskDetail.quantity}
+        WHERE ware_id = #{wareOrderTaskDetail.wareId}
+          AND sku_id = #{wareOrderTaskDetail.skuId}
+          AND stock_locked - #{wareOrderTaskDetail.quantity} >= 0
+
+    </update>
+
+    <update id="updateDeductAndUnlockStock">
+        UPDATE wms_ware_sku
+        SET stock = stock - #{wareOrderTaskDetail.quantity} , stock_locked = stock_locked -  #{wareOrderTaskDetail.quantity}
+        WHERE sku_id =  #{wareOrderTaskDetail.skuId}  AND ware_id =  #{wareOrderTaskDetail.wareId}  AND stock -  #{wareOrderTaskDetail.quantity}  >= 0 AND stock_locked -  #{wareOrderTaskDetail.quantity}  >= 0;
+    </update>
+
+    <!--  可以将结果集封装成一个dto或者直接使用map  -->
+    <resultMap id="skuHasStockResultMap" type="com.fz.mall.stock.pojo.dto.SkuHasStockDTO">
+        <result column="sku_id" property="skuId"/>
+        <result column="hasStock" property="hasStock" javaType="Boolean"/>
+    </resultMap>
+
+    <!--
+      使用map作为结果集  对于比较MySQL返回的是0和1 需要映射成Boolean 需要指定column和property 否则映射不到
+    -->
+    <resultMap id="skuHasStockResultMap2" type="java.util.Map">
+        <result column="skuId" property="skuId" javaType="Long"/>
+        <result column="hasStock" property="hasStock" javaType="Boolean"/>
+    </resultMap>
+
+
+    <select id="getSkuHasStockBySkuId" resultMap="skuHasStockResultMap">
+        SELECT sku_id, SUM(stock - stock_locked) > 0 as hasStock
+        FROM wms_ware_sku
+        WHERE sku_id IN
+        <foreach collection="skuIds" item="skuId" separator="," open="(" close=")">
+            #{skuId}
+        </foreach>
+        GROUP BY sku_id;
+    </select>
+
+
+    <resultMap id="skuStockResultMap" type="com.fz.mall.api.dto.SkuStockDTO">
+        <result column="sku_id" property="skuId"/>
+        <result column="stock" property="stock" javaType="java.lang.Integer"/>
+    </resultMap>
+
+
+    <!--   批量查询查询商品的总库存  将所有仓库的库存加在一起 而不是单个仓库  -->
+<!--    <select id="getSkuStockBySkuId" resultMap="skuStockResultMap">-->
+<!--        SELECT sku_id, SUM(stock - stock_locked) stock-->
+<!--        FROM wms_ware_sku-->
+<!--        WHERE sku_id IN-->
+<!--        <foreach collection="skuIds" item="skuId" separator="," open="(" close=")">-->
+<!--            #{skuId}-->
+<!--        </foreach>-->
+<!--        GROUP BY sku_id;-->
+<!--    </select>-->
+
+
+    <select id="getSkuStockBySkuId" resultMap="skuStockResultMap">
+        SELECT sku_id, stock - stock_locked stock
+        FROM wms_ware_sku
+        WHERE sku_id IN
+        <foreach collection="skuIds" item="skuId" separator="," open="(" close=")">
+            #{skuId}
+        </foreach>;
+    </select>
+
+
+
+    <resultMap id="wareHasStockResultMap" type="com.fz.mall.stock.pojo.WareHasStock">
+        <result column="sku_id" property="skuId"/>
+        <collection property="wareIds" ofType="java.lang.Long">
+            <result column="ware_id" javaType="java.lang.Long"/>
+        </collection>
+    </resultMap>
+
+    <select id="getWareIdHasStock" resultMap="wareHasStockResultMap">
+        SELECT sku_id, ware_id
+        FROM wms_ware_sku
+        WHERE
+        <foreach collection="skuQuantities" item="item" separator="OR">
+            (sku_id = #{item.skuId} AND (stock - stock_locked) >= #{item.quantity})
+        </foreach>
+    </select>
+
+
+
+
+</mapper>

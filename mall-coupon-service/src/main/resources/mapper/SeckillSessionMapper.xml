@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fz.mall.coupon.mapper.SeckillSessionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.fz.mall.coupon.entity.SeckillSession">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <resultMap id="getSeckillSessionWithSkuByTime" type="com.fz.mall.coupon.pojo.SeckillSessionDTO">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="status" property="status"/>
+        <collection property="relations" ofType="com.fz.mall.coupon.entity.SeckillSkuRelation">
+            <id column="relation_id" property="id"/>
+            <result column="promotion_id" property="promotionId"/>
+            <result column="promotion_session_id" property="promotionSessionId"/>
+            <result column="sku_id" property="skuId"/>
+            <result column="seckill_price" property="seckillPrice"/>
+            <result column="seckill_count" property="seckillCount"/>
+            <result column="seckill_limit" property="seckillLimit"/>
+            <result column="seckill_sort" property="seckillSort"/>
+        </collection>
+    </resultMap>
+
+    <!--  注意查询字段 同为id会自动取别名 所以需要手动重命名一下  -->
+    <select id="getSeckillSessionWithSkuByTime" resultMap="getSeckillSessionWithSkuByTime">
+        SELECT *, t2.id AS relation_id
+        FROM sms_seckill_session t1
+                 JOIN sms_seckill_sku_relation t2 ON t1.id = t2.promotion_session_id
+        WHERE t1.start_time BETWEEN #{start} AND #{end};
+    </select>
+
+</mapper>

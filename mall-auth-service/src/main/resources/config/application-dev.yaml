@@ -1,0 +1,31 @@
+spring:
+  thymeleaf:
+    #    关闭缓存 能够看到页面改变
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+  mvc:
+    static-path-pattern: /static/**
+  session:
+    store-type: redis
+
+#ribbon:
+#  # 请求处理的超时时间
+#  ReadTimeout: 60000
+#  # 请求连接的超时时间
+#  ConnectTimeout: 60000
+
+# feign中的配置的readTimeout和connectTimeout会覆盖ribbon中的ConnectTimeout和ReadTimeout
+feign:
+  client:
+    config:
+      default:
+        readTimeout: 10000
+        connectTimeout: 10000
+
+server:
+  servlet:
+    session:
+      # session过期时间
+      timeout: 30d
+

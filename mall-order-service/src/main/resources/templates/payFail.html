@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商城</title>
+    <script>
+        let time = 3;
+        function jump() {
+            setTimeout(() => {
+                time--;
+                if (time) {
+                    let jumpEle = document.getElementById('jump')
+                    jumpEle.innerText = `支付失败, ${time}s后跳转...`;
+                    jump();
+                } else location.href = 'http://www.mallmall.com'
+            }, 1000)
+        }
+        jump();
+    </script>
+</head>
+<body>
+<h2 id="jump">支付成功, 3s后跳转...</h2>
+</body>
+</html>

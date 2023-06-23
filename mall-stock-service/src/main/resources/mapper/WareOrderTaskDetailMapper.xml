@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fz.mall.stock.mapper.WareOrderTaskDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.fz.mall.stock.pojo.entity.WareOrderTaskDetail">
+        <id column="id" property="id"/>
+        <result column="sku_id" property="skuId"/>
+        <result column="sku_name" property="skuName"/>
+        <result column="sku_num" property="quantity"/>
+        <result column="task_id" property="taskId"/>
+        <result column="ware_id" property="wareId"/>
+        <result column="lock_status" property="lockStatus"/>
+    </resultMap>
+
+    <update id="updateStockItemStatus">
+            UPDATE wms_ware_order_task_detail SET lock_status = #{status}
+            WHERE task_id IN
+            <foreach collection="ids" item="id" close=")" open="(" separator=",">
+                #{id}
+            </foreach>
+    </update>
+    <update id="updateStatusByOrderSn">
+        UPDATE wms_ware_order_task_detail
+        SET lock_status = #{status}
+        WHERE task_id = (SELECT id FROM wms_ware_order_task WHERE order_sn = #{orderSn});
+    </update>
+
+    <select id="getWareOrderTaskDetailByOrderSn" resultMap="BaseResultMap">
+
+        SELECT *
+        FROM wms_ware_order_task_detail t1
+        WHERE t1.task_id = (SELECT id FROM wms_ware_order_task WHERE order_sn = #{orderSn});
+    </select>
+
+</mapper>

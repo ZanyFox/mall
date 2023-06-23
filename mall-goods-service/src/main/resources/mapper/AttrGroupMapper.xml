@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fz.mall.goods.mapper.AttrGroupMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.fz.mall.goods.pojo.entity.AttrGroup">
+        <id column="attr_group_id" property="attrGroupId"/>
+        <result column="attr_group_name" property="attrGroupName"/>
+        <result column="sort" property="sort"/>
+        <result column="descript" property="descript"/>
+        <result column="icon" property="icon"/>
+        <result column="catelog_id" property="catelogId"/>
+    </resultMap>
+
+    <resultMap id="AttrGroupVOResultMap" type="com.fz.mall.goods.pojo.vo.SkuItemVO$AttrGroupVO">
+        <result column="attr_group_id" property="attrGroupId"/>
+        <result column="attr_group_name" property="attrGroupName"/>
+        <collection property="attrs" ofType="com.fz.mall.goods.pojo.vo.SkuItemVO$AttrVO">
+            <result column="attr_name" property="attrName"/>
+            <result column="attr_value" property="attrValue"/>
+        </collection>
+    </resultMap>
+
+    <select id="getAttrGroupWithBaseAttrs" resultMap="AttrGroupVOResultMap">
+
+        SELECT t1.attr_group_id, t1.attr_group_name, t3.attr_name, t3.attr_value
+
+        FROM pms_attr_group t1
+                 JOIN pms_attr_attrgroup_relation t2 ON t1.attr_group_id = t2.attr_group_id
+                 JOIN pms_product_attr_value t3 ON t2.attr_id = t3.attr_id AND t3.spu_id = #{spuId}
+        WHERE t1.catelog_id = #{categoryId};
+    </select>
+
+
+    <select id="getAttrGroupWithSaleAttrs" resultMap="AttrGroupVOResultMap">
+        SELECT t1.attr_group_id, t1.attr_group_name, t4.attr_name, t4.attr_value
+        FROM pms_attr_group t1
+                 JOIN pms_attr_attrgroup_relation t2 ON t1.attr_group_id = t2.attr_group_id
+                 JOIN pms_sku_sale_attr_value t4 ON t4.attr_id = t2.attr_id AND t4.sku_id = #{skuId}
+        WHERE t1.catelog_id = #{categoryId};
+    </select>
+
+
+</mapper>

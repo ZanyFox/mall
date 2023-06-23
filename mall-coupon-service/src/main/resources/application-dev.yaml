@@ -1,0 +1,24 @@
+spring:
+  thymeleaf:
+    #    关闭缓存 能够看到页面改变
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+  redis:
+    host: ${redis.host}
+    port: ${redis.port}
+    password: ${redis.password}
+
+  mvc:
+    static-path-pattern: /static/**
+  session:
+    store-type: redis
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
+server:
+  servlet:
+    session:
+      # session过期时间
+      timeout: 30d

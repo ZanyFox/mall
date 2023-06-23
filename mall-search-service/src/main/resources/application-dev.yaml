@@ -1,0 +1,15 @@
+spring:
+  thymeleaf:
+    #    关闭缓存 能够看到页面改变
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+  mvc:
+    static-path-pattern: /static/**
+
+
+server:
+  servlet:
+    session:
+      # session过期时间
+      timeout: 30d

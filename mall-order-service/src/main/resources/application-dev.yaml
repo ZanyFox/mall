@@ -1,0 +1,37 @@
+spring:
+  thymeleaf:
+    #    关闭缓存 能够看到页面改变
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+  redis:
+    host: ${redis.host}
+    port: ${redis.port}
+    password: ${redis.password}
+
+  mvc:
+    static-path-pattern: /static/**
+  session:
+    store-type: redis
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
+server:
+  servlet:
+    session:
+      # session过期时间
+      timeout: 30d
+
+
+seata:
+  registry:
+    type: nacos
+    nacos:
+      server-addr: 127.0.0.1:8848
+      namespace: @nacos.namespace@
+      group: SEATA_GROUP
+      application: seata-server
+      username: nacos
+      password: nacos
+  data-source-proxy-mode: AT
