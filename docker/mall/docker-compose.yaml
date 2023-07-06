@@ -1,18 +1,161 @@
+version: "3.8"
 services:
   mall-gateway:
+    container_name: mall-gateway
     build: gateway
+    environment:
+      - LANG=C.UTF-8
     volumes:
       - $PWD/gateway/logs:/home/mall/logs
     ports:
       - "10010:10010"
     ulimits:
       nofile: 65535
+    deploy:
+      resources:
+        limits:
+          memory: 200M
 
   mall-goods-service:
+    container_name: mall-goods-service
+    environment:
+      - LANG=C.UTF-8
     build: goods
     volumes:
-      - $PWD/gateway/logs:/home/mall/logs
+      - $PWD/goods/logs:/home/mall/logs
     ports:
       - "8086:8086"
     ulimits:
       nofile: 65535
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+
+  mall-auth-service:
+    container_name: mall-auth-service
+    environment:
+      - LANG=C.UTF-8
+    build: auth
+    volumes:
+      - $PWD/auth/logs:/home/mall/logs
+    ports:
+      - "8088:8088"
+    ulimits:
+      nofile: 65535
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+
+  mall-user-service:
+    container_name: mall-user-service
+    environment:
+      - LANG=C.UTF-8
+    build: user
+    volumes:
+      - $PWD/user/logs:/home/mall/logs
+    ports:
+      - "8081:8081"
+    ulimits:
+      nofile: 65535
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+
+  mall-search-service:
+    container_name: mall-search-service
+    environment:
+      - LANG=C.UTF-8
+    build: search
+    volumes:
+      - $PWD/search/logs:/home/mall/logs
+    ports:
+      - "8087:8087"
+    ulimits:
+      nofile: 65535
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+
+  mall-stock-service:
+    container_name: mall-stock-service
+    environment:
+      - LANG=C.UTF-8
+    build: stock
+    volumes:
+      - $PWD/stock/logs:/home/mall/logs
+    ports:
+      - "8082:8082"
+    ulimits:
+      nofile: 65535
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+
+  mall-coupon-service:
+    container_name: mall-coupon-service
+    environment:
+      - LANG=C.UTF-8
+    build: coupon
+    volumes:
+      - $PWD/coupon/logs:/home/mall/logs
+    ports:
+      - "8085:8085"
+    ulimits:
+      nofile: 65535
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+
+  mall-order-service:
+    container_name: mall-order-service
+    environment:
+      - LANG=C.UTF-8
+    build: order
+    volumes:
+      - $PWD/order/logs:/home/mall/logs
+    ports:
+      - "8083:8083"
+    ulimits:
+      nofile: 65535
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+
+  mall-cart-service:
+    container_name: mall-cart-service
+    environment:
+      - LANG=C.UTF-8
+    build: cart
+    volumes:
+      - $PWD/cart/logs:/home/mall/logs
+    ports:
+      - "8090:8090"
+    ulimits:
+      nofile: 65535
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+
+  mall-biz-service:
+    container_name: mall-biz-service
+    environment:
+      - LANG=C.UTF-8
+    build: biz
+    volumes:
+      - $PWD/biz/logs:/home/mall/logs
+    ports:
+      - "8089:8089"
+    ulimits:
+      nofile: 65535
+    deploy:
+      resources:
+        limits:
+          memory: 200M

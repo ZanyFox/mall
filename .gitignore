@@ -36,7 +36,7 @@ target/
 *.tar.gz
 
 ### logs ####
-/logs/
+logs/
 *.log
 
 ### temp ignore ###
@@ -62,5 +62,5 @@ node_modules
 mall-test/
 mall-alipay-service/
 mall-sms-service/
-logs/
 static/
+docker/**/*.jar
