@@ -62,4 +62,5 @@ node_modules
 mall-test/
 mall-alipay-service/
 mall-sms-service/
-
+logs/
+static/

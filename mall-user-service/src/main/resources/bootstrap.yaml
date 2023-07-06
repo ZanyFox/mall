@@ -2,13 +2,13 @@ server:
   port: 8081
 spring:
   application:
-    
+
     name: @artifactId@
   cloud:
     nacos:
       discovery:
         # 这种写法可以从环境变量中读取NACOS_HOST和NACOS_PORT 如果读取不到 使用默认的
-        server-addr: ${NACOS_HOST:127.0.0.1}:${NACOS_PORT:8848}
+        server-addr: ${NACOS_HOST:192.168.214.1}:${NACOS_PORT:8848}
         username: nacos
         password: nacos
         namespace: @nacos.namespace@
@@ -23,4 +23,4 @@ spring:
             group: DEFAULT_GROUP
             refresh: true
   profiles:
-    active: @profiles.active@
+    active: dev

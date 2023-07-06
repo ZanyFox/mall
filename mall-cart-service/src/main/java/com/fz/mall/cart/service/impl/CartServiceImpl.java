@@ -69,7 +69,7 @@ public class CartServiceImpl implements CartService {
 
         cartOptional.ifPresent(item -> {
             CartCache cartCache = JSON.parseObject(item, CartCache.class);
-            cartCache.setQuantity(quantity);
+            cartCache.setQuantity(quantity + cartCache.getQuantity());
             redisCache.putHashObject(key, String.valueOf(skuId), cartCache);
         });
 

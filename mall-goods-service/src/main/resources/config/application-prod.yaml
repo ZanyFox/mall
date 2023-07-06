@@ -1,0 +1,32 @@
+spring:
+  thymeleaf:
+    #    关闭缓存 能够看到页面改变
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+  redis:
+    host: ${redis.host}
+    port: ${redis.port}
+    password: ${redis.password}
+
+  ## 如果指定了前缀则使用  否则使用缓存的名字作为前缀 就是Cacheable中配置的
+  ##spring.cache.redis.key-prefix=CACHE_
+  ##spring.cache.redis.use-key-prefix=false
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1800000
+      cache-null-values: true
+  mvc:
+    static-path-pattern: /static/**
+  session:
+    store-type: redis
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
+server:
+  servlet:
+    session:
+      # session过期时间
+      timeout: 30d

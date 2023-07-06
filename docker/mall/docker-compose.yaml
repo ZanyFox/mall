@@ -1,0 +1,18 @@
+services:
+  mall-gateway:
+    build: gateway
+    volumes:
+      - $PWD/gateway/logs:/home/mall/logs
+    ports:
+      - "10010:10010"
+    ulimits:
+      nofile: 65535
+
+  mall-goods-service:
+    build: goods
+    volumes:
+      - $PWD/gateway/logs:/home/mall/logs
+    ports:
+      - "8086:8086"
+    ulimits:
+      nofile: 65535
