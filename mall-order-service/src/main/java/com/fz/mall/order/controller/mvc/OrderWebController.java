@@ -65,10 +65,10 @@ public class OrderWebController {
 
         log.info("提交信息: {}", orderSubmitParam.toString());
         OrderSubmitResponseVO orderSubmitResponseVO = null;
-        if (orderSubmitParam.getSeckillSkuId() != null) orderSubmitResponseVO = orderService.submitSeckillOrder(orderSubmitParam);
-        else orderSubmitResponseVO = orderService.saveOrder(orderSubmitParam);
+        if (orderSubmitParam.getSeckillSkuId() != null)
+            orderSubmitResponseVO = orderService.submitSeckillOrder(orderSubmitParam);
+        else orderSubmitResponseVO = orderService.generateOrder(orderSubmitParam);
         model.addAttribute("submitOrderResp", orderSubmitResponseVO);
-
         return "pay";
     }
 

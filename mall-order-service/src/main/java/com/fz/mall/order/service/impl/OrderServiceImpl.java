@@ -107,8 +107,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         OrderInfoVO orderInfoVO = new OrderInfoVO();
         CompletableFuture<Void> addressFuture = CompletableFuture.runAsync(() -> {
             RequestContextHolder.setRequestAttributes(requestAttributes);
-            ServerResponseEntity<List<MemberReceiveAddressDTO>> userAddress = memberFeignClient
-                    .getCurrentUserAddress();
+            ServerResponseEntity<List<MemberReceiveAddressDTO>> userAddress = memberFeignClient.getCurrentUserAddress();
             List<MemberReceiveAddressDTO> addresses = userAddress.getData();
             orderInfoVO.setMemberAddressVos(addresses);
         }, executor);
@@ -139,9 +138,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
 
-    @GlobalTransactional
+    /**
+     * 使用MQ保证最终一致性
+     *
+     * @param orderSubmitParam
+     * @return
+     */
     @Override
-    public OrderSubmitResponseVO saveOrder(OrderSubmitParam orderSubmitParam) {
+    @Transactional
+    public OrderSubmitResponseVO generateOrder(OrderSubmitParam orderSubmitParam) {
 
         checkOrderToken(orderSubmitParam.getOrderToken());
 
@@ -182,14 +187,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             orderItem.setCouponAmount(new BigDecimal(0));
             orderItem.setPromotionAmount(new BigDecimal(0));
             orderItem.setIntegrationAmount(new BigDecimal(0));
-            BigDecimal finalPrice = cartItem.getTotalPrice()
-                    .subtract(orderItem.getCouponAmount())
-                    .subtract(orderItem.getPromotionAmount())
-                    .subtract(orderItem.getIntegrationAmount());
+            BigDecimal finalPrice = cartItem.getTotalPrice().subtract(orderItem.getCouponAmount()).subtract(orderItem.getPromotionAmount()).subtract(orderItem.getIntegrationAmount());
             orderItem.setRealAmount(finalPrice);
             orderItem.setSpuName("");
             orderItem.setSpuBrand("");
-
             return orderItem;
         }).collect(Collectors.toList());
 
@@ -229,20 +230,27 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         // 锁定库存
 
-        LockStockDTO lockStockDTO = new LockStockDTO();
-        lockStockDTO.setOrderSn(order.getOrderSn());
-        List<SkuQuantityDTO> skuQuantityDTOS = orderItems.stream().map((item) -> {
-            SkuQuantityDTO skuQuantityDTO = new SkuQuantityDTO();
-            skuQuantityDTO.setQuantity(item.getSkuQuantity());
-            skuQuantityDTO.setSkuId(item.getSkuId());
-            return skuQuantityDTO;
-        }).collect(Collectors.toList());
-        lockStockDTO.setSkuQuantityDTOS(skuQuantityDTOS);
-        ServerResponseEntity serverResponseEntity = stockFeignClient.updateStockLock(lockStockDTO);
-        if (!serverResponseEntity.getSuccess()) {
-            log.error(serverResponseEntity.getMsg());
-            throw new MallServerException(ResponseEnum.getResponseEnumByCode(serverResponseEntity.getCode()));
+        try {
+            LockStockDTO lockStockDTO = new LockStockDTO();
+            lockStockDTO.setOrderSn(order.getOrderSn());
+            List<SkuQuantityDTO> skuQuantityDTOS = orderItems.stream().map((item) -> {
+                SkuQuantityDTO skuQuantityDTO = new SkuQuantityDTO();
+                skuQuantityDTO.setQuantity(item.getSkuQuantity());
+                skuQuantityDTO.setSkuId(item.getSkuId());
+                return skuQuantityDTO;
+            }).collect(Collectors.toList());
+            lockStockDTO.setSkuQuantityDTOS(skuQuantityDTOS);
+            ServerResponseEntity serverResponseEntity = stockFeignClient.updateStockLock(lockStockDTO);
+            if (!serverResponseEntity.getSuccess()) {
+                log.error(serverResponseEntity.getMsg());
+                // 执行失败抛出异常 订单回滚
+                throw new MallServerException(ResponseEnum.getResponseEnumByCode(serverResponseEntity.getCode()));
+            }
+        } catch (Exception e) {
+            rabbitTemplate.convertAndSend(StockMqConstants.STOCK_EXCHANGE, StockMqConstants.UNLOCK_STOCK_ROUTING_KEY, order.getOrderSn());
+            throw e;
         }
+
 
         orderSubmitResponseVO.setOrder(order);
 
@@ -252,6 +260,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 .withBody(JSON.toJSONBytes(order.getOrderSn()))
                 .setHeader(MessageProperties.X_DELAY, OrderMqConstants.ORDER_CLOSE_DELAY_TIME)
                 .build();
+
         rabbitTemplate.convertAndSend(OrderMqConstants.ORDER_EXCHANGE, OrderMqConstants.ORDER_CLOSE_ROUTING_KEY, message);
         // 发送订单创建成功消息  清空购物车选中项
         rabbitTemplate.convertAndSend(OrderMqConstants.ORDER_EXCHANGE, OrderMqConstants.ORDER_CREATE_ROUTING_KEY, ContextHolder.getUser().getUid());
@@ -299,6 +308,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (order == null || !Objects.equals(order.getStatus(), OrderStatus.NEW.getCode())) {
             return;
         }
+        // TODO 查询支付平台是否已经支付
         lambdaUpdate().eq(Order::getOrderSn, orderSn).set(Order::getStatus, OrderStatus.CANCELED.getCode()).update();
 
         rabbitTemplate.convertAndSend(StockMqConstants.STOCK_EXCHANGE, StockMqConstants.UNLOCK_STOCK_ROUTING_KEY, orderSn);
@@ -308,8 +318,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public String pay(String orderSn) {
 
         Order order = lambdaQuery().select(Order::getTotalAmount).eq(Order::getOrderSn, orderSn).one();
-        BigDecimal price = order.getTotalAmount()
-                .setScale(2, RoundingMode.UP);
+        BigDecimal price = order.getTotalAmount().setScale(2, RoundingMode.UP);
         try {
             return AlipayUtil.pay(orderSn, "Subject", price.toString());
         } catch (AlipayApiException e) {
@@ -328,8 +337,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         return PageUtil.pageVO(orderPage, order -> {
             OrderListItemVO orderListItemVO = new OrderListItemVO();
             BeanUtils.copyProperties(order, orderListItemVO);
-            List<OrderItem> orderItems = orderItemList.stream()
-                    .filter((item) -> Objects.equals(order.getOrderSn(), item.getOrderSn())).collect(Collectors.toList());
+            List<OrderItem> orderItems = orderItemList.stream().filter((item) -> Objects.equals(order.getOrderSn(), item.getOrderSn())).collect(Collectors.toList());
             orderListItemVO.setItems(orderItems);
             return orderListItemVO;
         });
@@ -378,10 +386,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         save(order);
 
         // 发送延迟消息 一分钟后关闭订单
-        Message message = MessageBuilder
-                .withBody(JSON.toJSONBytes(order.getOrderSn()))
-                .setHeader(MessageProperties.X_DELAY, OrderMqConstants.ORDER_CLOSE_DELAY_TIME)
-                .build();
+        Message message = MessageBuilder.withBody(JSON.toJSONBytes(order.getOrderSn())).setHeader(MessageProperties.X_DELAY, OrderMqConstants.ORDER_CLOSE_DELAY_TIME).build();
         rabbitTemplate.convertAndSend(OrderMqConstants.ORDER_EXCHANGE, OrderMqConstants.ORDER_CLOSE_ROUTING_KEY, message);
 
     }
