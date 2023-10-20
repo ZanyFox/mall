@@ -22,6 +22,7 @@ public enum ResponseEnum {
     SECKILL_TIME_ERROR(11010, "秒杀活动时间不正确"),
     SECKILL_VERIFY_ERROR(11011, "秒杀校验失败"),
     BEYOND_PURCHASE_LIMIT(11012, "超出购买限制"),
+    DELIVERY_ADDRESS_INVALID(11013, "用户收货地址不能为空"),
 
 
     USER_LOGIN_ERROR(12000, "用户登录异常"),

@@ -25,7 +25,6 @@ public class IndexController {
         List<Category> categories = categoryService.getCategoryMenuList();
         model.addAttribute("categories", categories);
         model.addAttribute("name", "Alan");
-        log.info("当前线程：{}", Thread.currentThread().getName());
         return "index";
     }
 

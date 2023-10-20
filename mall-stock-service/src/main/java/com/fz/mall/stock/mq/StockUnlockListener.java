@@ -22,7 +22,7 @@ public class StockUnlockListener {
 
 
     /**
-     * 订单超时关闭时解锁库存
+     * 订单超时关闭时或者其他异常原因  解锁库存
      * @param orderSn
      */
     @RabbitHandler

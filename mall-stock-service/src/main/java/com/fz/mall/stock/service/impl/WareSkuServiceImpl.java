@@ -173,13 +173,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuMapper, WareSku> impl
 
         if (ObjectUtils.isEmpty(wareOrderTaskDetails)) return;
 
-//        if (checkStatus) {
-//            ServerResponseEntity<Integer> orderStatusResp = orderFeignClient.getOrderStatusById(lockStockTaskDTO.getOrderSn());
-//            Integer status = orderStatusResp.getData();
-//            // 只有订单取消或者由于异常订单创建失败（创建订单时回滚） 时才解锁库存
-//            if (status != null && ObjectUtils.notEqual(status, OrderStatus.CANCELED.getCode()))
-//                return;
-//        }
+
         List<Long> taskIds = wareOrderTaskDetails.stream().map(WareOrderTaskDetail::getTaskId).collect(Collectors.toList());
         wareOrderTaskDetailService.updateOrderStockItemStatus(taskIds, StockLockStatus.UNLOCKED.getCode());
 

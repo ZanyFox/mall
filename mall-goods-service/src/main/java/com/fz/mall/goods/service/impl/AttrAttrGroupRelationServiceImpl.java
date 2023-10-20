@@ -1,12 +1,11 @@
 package com.fz.mall.goods.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fz.mall.goods.mapper.AttrAttrGroupRelationMapper;
 import com.fz.mall.goods.pojo.dto.AttrGroupRelationDTO;
 import com.fz.mall.goods.pojo.entity.AttrAttrGroupRelation;
-import com.fz.mall.goods.mapper.AttrAttrGroupRelationMapper;
 import com.fz.mall.goods.service.AttrAttrGroupRelationService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +23,6 @@ import java.util.stream.Collectors;
 @Service
 public class AttrAttrGroupRelationServiceImpl extends ServiceImpl<AttrAttrGroupRelationMapper, AttrAttrGroupRelation> implements AttrAttrGroupRelationService {
 
-    @Autowired
-    private AttrAttrGroupRelationMapper attrAttrGroupRelationMapper;
 
 
     @Transactional

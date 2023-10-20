@@ -1,6 +1,5 @@
 package com.fz.mall.stock;
 
-import com.fz.mall.common.rabbitmq.constant.StockMqConstants;
 import com.fz.mall.stock.mapper.WareOrderTaskDetailMapper;
 import com.fz.mall.stock.mapper.WareSkuMapper;
 import com.fz.mall.stock.pojo.entity.WareOrderTaskDetail;
