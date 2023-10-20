@@ -2,7 +2,6 @@ package com.fz.mall.goods.controller.app;
 
 import com.fz.mall.common.resp.ServerResponseEntity;
 import com.fz.mall.goods.pojo.entity.ProductAttrValue;
-import com.fz.mall.goods.service.AttrService;
 import com.fz.mall.goods.service.ProductAttrValueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +20,6 @@ import java.util.List;
 @RequestMapping("/goods/attr")
 public class AttrController {
 
-    @Autowired
-    private AttrService attrService;
 
     @Autowired
     private ProductAttrValueService productAttrValueService;

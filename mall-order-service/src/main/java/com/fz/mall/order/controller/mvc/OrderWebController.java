@@ -67,7 +67,7 @@ public class OrderWebController {
         OrderSubmitResponseVO orderSubmitResponseVO = null;
         if (orderSubmitParam.getSeckillSkuId() != null)
             orderSubmitResponseVO = orderService.submitSeckillOrder(orderSubmitParam);
-        else orderSubmitResponseVO = orderService.generateOrder(orderSubmitParam);
+        else orderSubmitResponseVO = orderService.tryGenerateOrder(orderSubmitParam);
         model.addAttribute("submitOrderResp", orderSubmitResponseVO);
         return "pay";
     }

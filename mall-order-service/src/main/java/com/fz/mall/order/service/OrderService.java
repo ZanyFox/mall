@@ -27,7 +27,7 @@ public interface OrderService extends IService<Order> {
      *
      * @param orderSubmitParam
      */
-    OrderSubmitResponseVO generateOrder(OrderSubmitParam orderSubmitParam);
+    OrderSubmitResponseVO tryGenerateOrder(OrderSubmitParam orderSubmitParam);
 
     /**
      * 提交秒杀订单

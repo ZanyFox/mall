@@ -51,7 +51,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
@@ -93,6 +98,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private StockFeignClient stockFeignClient;
 
     private OrderSeckillService orderSeckillService;
+
+    private PlatformTransactionManager transactionManager;
 
     private static final DefaultRedisScript<Long> ORDER_TOKEN_SCRIPT;
 
@@ -138,61 +145,22 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
 
-    /**
-     * 使用MQ保证最终一致性
-     *
-     * @param orderSubmitParam
-     * @return
-     */
-    @Override
-    @Transactional
-    public OrderSubmitResponseVO generateOrder(OrderSubmitParam orderSubmitParam) {
-
-        checkOrderToken(orderSubmitParam.getOrderToken());
+    private OrderSubmitResponseVO handleGenerateOrder(String orderSn, List<OrderItem> orderItems, MemberReceiveAddressDTO destAddr) {
 
         OrderSubmitResponseVO orderSubmitResponseVO = new OrderSubmitResponseVO();
         Order order = new Order();
 
-        order.setOrderSn(IdWorker.getTimeId());
+        order.setOrderSn(orderSn);
         // 运费
         order.setFreightAmount(new BigDecimal(0));
-
-        if (orderSubmitParam.getAddrId() != null) {
-            // 收货信息
-            ServerResponseEntity<MemberReceiveAddressDTO> destAddrResp = memberFeignClient.getAddressById(orderSubmitParam.getAddrId());
-            MemberReceiveAddressDTO destAddr = destAddrResp.getData();
-            order.setReceiverCity(destAddr.getCity());
-            order.setReceiverDetailAddress(destAddr.getDetailAddress());
-            order.setReceiverName(destAddr.getName());
-            order.setReceiverPhone(destAddr.getPhone());
-            order.setReceiverPostCode(destAddr.getPostCode());
-            order.setReceiverProvince(destAddr.getProvince());
-            order.setReceiverRegion(destAddr.getRegion());
-        }
-
-
-        ServerResponseEntity<List<CartItemDTO>> userCheckedCartItems = cartFeignClient.getUserCheckedCartItems();
-        List<CartItemDTO> cartItems = userCheckedCartItems.getData();
-
-
-        List<OrderItem> orderItems = cartItems.stream().map((cartItem) -> {
-            OrderItem orderItem = new OrderItem();
-            orderItem.setOrderSn(order.getOrderSn());
-            orderItem.setSkuName(cartItem.getTitle());
-            orderItem.setSkuId(cartItem.getSkuId());
-            orderItem.setSkuPic(cartItem.getImage());
-            orderItem.setSkuQuantity(cartItem.getCount());
-            orderItem.setSkuAttrsVals(String.join(";", cartItem.getSkuAttrValues()));
-            orderItem.setSkuPrice(cartItem.getPrice());
-            orderItem.setCouponAmount(new BigDecimal(0));
-            orderItem.setPromotionAmount(new BigDecimal(0));
-            orderItem.setIntegrationAmount(new BigDecimal(0));
-            BigDecimal finalPrice = cartItem.getTotalPrice().subtract(orderItem.getCouponAmount()).subtract(orderItem.getPromotionAmount()).subtract(orderItem.getIntegrationAmount());
-            orderItem.setRealAmount(finalPrice);
-            orderItem.setSpuName("");
-            orderItem.setSpuBrand("");
-            return orderItem;
-        }).collect(Collectors.toList());
+        // 收货地址
+        order.setReceiverCity(destAddr.getCity());
+        order.setReceiverDetailAddress(destAddr.getDetailAddress());
+        order.setReceiverName(destAddr.getName());
+        order.setReceiverPhone(destAddr.getPhone());
+        order.setReceiverPostCode(destAddr.getPostCode());
+        order.setReceiverProvince(destAddr.getProvince());
+        order.setReceiverRegion(destAddr.getRegion());
 
         // 订单总额
         BigDecimal orderTotalAmount = orderItems.stream().map(OrderItem::getRealAmount).reduce(new BigDecimal(0), BigDecimal::add);
@@ -228,17 +196,53 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 保存订单
         save(order);
 
-        // 锁定库存
+        orderSubmitResponseVO.setOrder(order);
+        return orderSubmitResponseVO;
 
+    }
+
+    /**
+     * 锁定库存，锁定成功返回商品信息
+     *
+     * @param orderSn
+     */
+    private List<OrderItem> lockStock(String orderSn) {
+
+        // 获取购物车选中商品信息
+        ServerResponseEntity<List<CartItemDTO>> userCheckedCartItems = cartFeignClient.getUserCheckedCartItems();
+        List<CartItemDTO> cartItems = userCheckedCartItems.getData();
+
+        List<OrderItem> orderItems = cartItems.stream().map((cartItem) -> {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setOrderSn(orderSn);
+            orderItem.setSkuName(cartItem.getTitle());
+            orderItem.setSkuId(cartItem.getSkuId());
+            orderItem.setSkuPic(cartItem.getImage());
+            orderItem.setSkuQuantity(cartItem.getCount());
+            orderItem.setSkuAttrsVals(String.join(";", cartItem.getSkuAttrValues()));
+            orderItem.setSkuPrice(cartItem.getPrice());
+            orderItem.setCouponAmount(new BigDecimal(0));
+            orderItem.setPromotionAmount(new BigDecimal(0));
+            orderItem.setIntegrationAmount(new BigDecimal(0));
+            BigDecimal finalPrice = cartItem.getTotalPrice().subtract(orderItem.getCouponAmount()).subtract(orderItem.getPromotionAmount()).subtract(orderItem.getIntegrationAmount());
+            orderItem.setRealAmount(finalPrice);
+            orderItem.setSpuName("");
+            orderItem.setSpuBrand("");
+            return orderItem;
+        }).collect(Collectors.toList());
+
+        List<SkuQuantityDTO> skuQuantityDTOS = orderItems.stream().map((item) -> {
+            SkuQuantityDTO skuQuantityDTO = new SkuQuantityDTO();
+            skuQuantityDTO.setQuantity(item.getSkuQuantity());
+            skuQuantityDTO.setSkuId(item.getSkuId());
+            return skuQuantityDTO;
+        }).collect(Collectors.toList());
+
+        // 锁定库存
         try {
             LockStockDTO lockStockDTO = new LockStockDTO();
-            lockStockDTO.setOrderSn(order.getOrderSn());
-            List<SkuQuantityDTO> skuQuantityDTOS = orderItems.stream().map((item) -> {
-                SkuQuantityDTO skuQuantityDTO = new SkuQuantityDTO();
-                skuQuantityDTO.setQuantity(item.getSkuQuantity());
-                skuQuantityDTO.setSkuId(item.getSkuId());
-                return skuQuantityDTO;
-            }).collect(Collectors.toList());
+            lockStockDTO.setOrderSn(orderSn);
+
             lockStockDTO.setSkuQuantityDTOS(skuQuantityDTOS);
             ServerResponseEntity serverResponseEntity = stockFeignClient.updateStockLock(lockStockDTO);
             if (!serverResponseEntity.getSuccess()) {
@@ -247,23 +251,63 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 throw new MallServerException(ResponseEnum.getResponseEnumByCode(serverResponseEntity.getCode()));
             }
         } catch (Exception e) {
-            rabbitTemplate.convertAndSend(StockMqConstants.STOCK_EXCHANGE, StockMqConstants.UNLOCK_STOCK_ROUTING_KEY, order.getOrderSn());
+            rabbitTemplate.convertAndSend(StockMqConstants.STOCK_EXCHANGE, StockMqConstants.UNLOCK_STOCK_ROUTING_KEY, orderSn);
+            throw new MallServerException(ResponseEnum.SERVER_INTERNAL_ERROR);
+        }
+        return orderItems;
+    }
+
+
+    private MemberReceiveAddressDTO getUserAddrInfo(Long addrId) {
+
+        if (ObjectUtils.isEmpty(addrId)) {
+            throw new MallServerException(ResponseEnum.DELIVERY_ADDRESS_INVALID);
+        }
+        ServerResponseEntity<MemberReceiveAddressDTO> destAddrResp = memberFeignClient.getAddressById(addrId);
+        return destAddrResp.getData();
+    }
+
+    /**
+     * 使用MQ保证最终一致性
+     *
+     * @param orderSubmitParam
+     * @return
+     */
+    @Override
+    public OrderSubmitResponseVO tryGenerateOrder(OrderSubmitParam orderSubmitParam) {
+
+        // 校验订单token
+        checkOrderToken(orderSubmitParam.getOrderToken());
+        // 生成订单id
+        String orderSn = IdWorker.getTimeId();
+        // 锁库存
+        List<OrderItem> orderItems = lockStock(orderSn);
+        // 获取用户地址信息
+        MemberReceiveAddressDTO destAddr = getUserAddrInfo(orderSubmitParam.getAddrId());
+
+        OrderSubmitResponseVO orderSubmitResponseVO;
+
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        TransactionStatus transactionStatus = transactionManager.getTransaction(definition);
+        try {
+            orderSubmitResponseVO = handleGenerateOrder(orderSn, orderItems, destAddr);
+            transactionManager.commit(transactionStatus);
+        } catch (Throwable e) {
+            transactionManager.rollback(transactionStatus);
             throw e;
         }
 
-
-        orderSubmitResponseVO.setOrder(order);
-
-
         // 发送延迟消息 一分钟后关闭订单
         Message message = MessageBuilder
-                .withBody(JSON.toJSONBytes(order.getOrderSn()))
+                .withBody(JSON.toJSONBytes(orderSn))
                 .setHeader(MessageProperties.X_DELAY, OrderMqConstants.ORDER_CLOSE_DELAY_TIME)
                 .build();
 
         rabbitTemplate.convertAndSend(OrderMqConstants.ORDER_EXCHANGE, OrderMqConstants.ORDER_CLOSE_ROUTING_KEY, message);
         // 发送订单创建成功消息  清空购物车选中项
         rabbitTemplate.convertAndSend(OrderMqConstants.ORDER_EXCHANGE, OrderMqConstants.ORDER_CREATE_ROUTING_KEY, ContextHolder.getUser().getUid());
+
+
         return orderSubmitResponseVO;
     }
 
@@ -288,11 +332,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         order.setPayAmount(seckillOrderDTO.getSeckillPrice().multiply(new BigDecimal(seckillOrderDTO.getCount())));
         orderSubmitResponseVO.setOrder(order);
 
+        // 异步创建订单
         rabbitTemplate.convertAndSend(OrderMqConstants.ORDER_EXCHANGE, OrderMqConstants.ORDER_SECKILL_CREATE_ROUTING_KEY, seckillOrderDTO);
 
         return orderSubmitResponseVO;
     }
 
+    /**
+     * 校验订单token
+     *
+     * @param token
+     */
     private void checkOrderToken(String token) {
         String orderTokenKey = OrderConstants.ORDER_TOKEN_KEY + ContextHolder.getUser().getUid();
         //lua原子验证令牌 防止并发问题

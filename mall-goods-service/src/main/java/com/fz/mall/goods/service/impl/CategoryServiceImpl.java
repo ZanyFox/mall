@@ -1,5 +1,6 @@
 package com.fz.mall.goods.service.impl;
 
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fz.mall.common.redis.constant.GoodsCacheConstant;
 import com.fz.mall.goods.pojo.entity.Category;
@@ -8,15 +9,16 @@ import com.fz.mall.goods.service.CategoryBrandRelationService;
 import com.fz.mall.goods.service.CategoryService;
 import com.fz.mall.goods.pojo.vo.CategoryTitleVO;
 import com.fz.mall.goods.pojo.vo.CategoryDetailVO;
+import com.github.benmanes.caffeine.cache.Cache;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -30,17 +32,16 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
 
-    @Resource
     private CategoryMapper categoryMapper;
 
-    @Resource
     private CategoryBrandRelationService categoryBrandRelationService;
 
-    @Autowired
     private StringRedisTemplate redisTemplate;
 
+    private Cache<String, Object> caffeineCache;
 
     @Override
     public List<Category> listAll() {
@@ -65,10 +66,24 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
      * key 使用SpEL表达式 其中想使用字符串的话用单引号
      * sync true 调用同步方法获取缓存
      */
-    @Cacheable(value = GoodsCacheConstant.GOODS_CATEGORY_MENU, key = "'list'",sync = true)
+//    @Cacheable(value = GoodsCacheConstant.GOODS_CATEGORY_PREFIX, key = "'menu'",sync = true)
+//    @Override
+//    public List<Category> getCategoryMenuList() {
+//        return lambdaQuery().eq(Category::getCatLevel, 1).list();
+//    }
+
+    /**
+     * 使用Caffeine作为JVM进程缓存
+     * @return
+     */
     @Override
     public List<Category> getCategoryMenuList() {
-        return lambdaQuery().eq(Category::getCatLevel, 1).list();
+
+        Object o = caffeineCache.get(GoodsCacheConstant.GOODS_CATEGORY_MENU, key -> {
+            String categoryMenuJson = redisTemplate.opsForValue().get(GoodsCacheConstant.GOODS_CATEGORY_MENU);
+            return JSON.parseObject(categoryMenuJson, List.class);
+        });
+        return (List<Category>) o;
     }
 
 
