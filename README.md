@@ -13,8 +13,6 @@
 
 - 消息队列保证分布式事务最终一致性
 
-- 本地缓存+redis+定时任务更新商品分类
-
 - 可使用gitee授权登录
 
   
@@ -39,3 +37,20 @@ mall
 
 ## 🧩项目截图
 
+![spu管理](https://raw.githubusercontent.com/ZanyFox/mall/dev/demo/spu%E7%AE%A1%E7%90%86.png)
+
+![](https://raw.githubusercontent.com/ZanyFox/mall/dev/demo/%E5%88%86%E7%B1%BB%E7%BB%B4%E6%8A%A4.png)
+
+![](https://raw.githubusercontent.com/ZanyFox/mall/dev/demo/%E5%95%86%E5%93%81%E6%90%9C%E7%B4%A2.png)
+
+
+
+![](https://raw.githubusercontent.com/ZanyFox/mall/dev/demo/%E5%95%86%E5%93%81%E8%AF%A6%E6%83%85.png)
+
+![](https://raw.githubusercontent.com/ZanyFox/mall/dev/demo/%E8%AE%A2%E5%8D%95%E9%A1%B5%E9%9D%A2.png)
+
+![](https://raw.githubusercontent.com/ZanyFox/mall/dev/demo/%E8%B0%83%E7%94%A8%E6%94%AF%E4%BB%98%E5%AE%9D%E6%8E%A5%E5%8F%A3.png)
+
+
+
+![](https://raw.githubusercontent.com/ZanyFox/mall/dev/demo/%E9%A6%96%E9%A1%B5%E5%88%86%E7%B1%BB.png)
