@@ -50,7 +50,7 @@
         <alipay.version>4.35.150.ALL</alipay.version>
         <elasticsearch.version>7.12.1</elasticsearch.version>
         <okhttp.version>4.11.0</okhttp.version>
-        <caffeine.version>3.1.8</caffeine.version>
+        <caffeine.version>2.9.3</caffeine.version>
         <spring-session-bom.version>2021.1.1</spring-session-bom.version>
         <alibabacloud-dysmsapi20170525.version>2.0.23</alibabacloud-dysmsapi20170525.version>
 

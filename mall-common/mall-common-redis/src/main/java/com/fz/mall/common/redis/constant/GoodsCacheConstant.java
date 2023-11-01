@@ -16,4 +16,7 @@ public final class GoodsCacheConstant {
      */
     public static final String GOODS_CATEGORY_TITLE = GOODS_CATEGORY_PREFIX + "title:";
 
+
+    public static final String GOODS_CATEGORY_MENU_LOCK = GOODS_CATEGORY_MENU + ":lock";
+
 }

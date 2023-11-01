@@ -4,6 +4,7 @@ import com.fz.mall.common.security.interceptor.TokenInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -17,7 +18,7 @@ public class WebSecurityMvcConfig implements WebMvcConfigurer {
 
     private final StringRedisTemplate stringRedisTemplate;
 
-    private final  List<AuthPathAdapter> authPathAdapters;
+    private final List<AuthPathAdapter> authPathAdapters;
 
 
     public WebSecurityMvcConfig(StringRedisTemplate stringRedisTemplate, List<AuthPathAdapter> authPathAdapters) {
@@ -36,4 +37,13 @@ public class WebSecurityMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns(excludePaths);
     }
+
+    // 跨域
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedOrigins("*")
+//                .allowCredentials(true)
+//                .allowedMethods("*");
+//}
 }

@@ -1,24 +1,22 @@
 package com.fz.mall.goods.service.impl;
 
-import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fz.mall.common.redis.constant.GoodsCacheConstant;
-import com.fz.mall.goods.pojo.entity.Category;
 import com.fz.mall.goods.mapper.CategoryMapper;
+import com.fz.mall.goods.pojo.entity.Category;
+import com.fz.mall.goods.pojo.vo.CategoryDetailVO;
+import com.fz.mall.goods.pojo.vo.CategoryTitleVO;
 import com.fz.mall.goods.service.CategoryBrandRelationService;
 import com.fz.mall.goods.service.CategoryService;
-import com.fz.mall.goods.pojo.vo.CategoryTitleVO;
-import com.fz.mall.goods.pojo.vo.CategoryDetailVO;
-import com.github.benmanes.caffeine.cache.Cache;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -32,16 +30,22 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@AllArgsConstructor
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
 
+    @Autowired
     private CategoryMapper categoryMapper;
 
+    @Autowired
     private CategoryBrandRelationService categoryBrandRelationService;
 
+    @Autowired
     private StringRedisTemplate redisTemplate;
 
-    private Cache<String, Object> caffeineCache;
+//    private final Cache<String, Object> caffeineCache = Caffeine.newBuilder().build();
+
+//    @Autowired
+//    private RedissonClient redissonClient;
+
 
     @Override
     public List<Category> listAll() {
@@ -66,25 +70,39 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
      * key 使用SpEL表达式 其中想使用字符串的话用单引号
      * sync true 调用同步方法获取缓存
      */
-//    @Cacheable(value = GoodsCacheConstant.GOODS_CATEGORY_PREFIX, key = "'menu'",sync = true)
-//    @Override
-//    public List<Category> getCategoryMenuList() {
-//        return lambdaQuery().eq(Category::getCatLevel, 1).list();
-//    }
+    @Cacheable(value = GoodsCacheConstant.GOODS_CATEGORY_PREFIX, key = "'menu'",sync = true)
+    @Override
+    public List<Category> getCategoryMenuList() {
+        return lambdaQuery().eq(Category::getCatLevel, 1).list();
+    }
 
     /**
      * 使用Caffeine作为JVM进程缓存
+     *
      * @return
      */
-    @Override
-    public List<Category> getCategoryMenuList() {
+//    @Override
+//    public List<Category> getCategoryMenuList() {
+//
+//        Object o = caffeineCache.get(GoodsCacheConstant.GOODS_CATEGORY_MENU, key -> lambdaQuery().eq(Category::getCatLevel, 1).list());
+//        return (List<Category>) o;
+//    }
 
-        Object o = caffeineCache.get(GoodsCacheConstant.GOODS_CATEGORY_MENU, key -> {
-            String categoryMenuJson = redisTemplate.opsForValue().get(GoodsCacheConstant.GOODS_CATEGORY_MENU);
-            return JSON.parseObject(categoryMenuJson, List.class);
-        });
-        return (List<Category>) o;
-    }
+//    private List queryCategoryMenuCache() {
+//
+//        String categoryMenuJson = redisTemplate.opsForValue().get(GoodsCacheConstant.GOODS_CATEGORY_MENU);
+//        if (StringUtils.isNotBlank(categoryMenuJson)) {
+//            return JSON.parseObject(categoryMenuJson, List.class);
+//        }
+//
+//        RLock lock = redissonClient.getLock(GoodsCacheConstant.GOODS_CATEGORY_MENU_LOCK);
+//        try {
+//            lock.lock();
+//            return lambdaQuery().eq(Category::getCatLevel, 1).list();
+//        }  finally {
+//            lock.unlock();
+//        }
+//    }
 
 
     private List<CategoryTitleVO> buildCategoryTitlesWithDetail(List<Category> categories, Long categoryMenuId) {
@@ -138,13 +156,16 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 //    @CacheEvict(value = "category", allEntries = true)
 
     /**
-     * 更新分类时 需要更新品牌分类关系表中的分类名称
+     * 更新分类时 需要更新品牌分类关系表中的分类名称 并且删除缓存
      *
      * @param category
      */
+    @CacheEvict(cacheNames = GoodsCacheConstant.GOODS_CATEGORY_TITLE, key = "'map'")
     @Transactional
     @Override
     public void updateCascade(Category category) {
+//        caffeineCache.invalidate(GoodsCacheConstant.GOODS_CATEGORY_MENU);
+//        redisTemplate.delete(GoodsCacheConstant.GOODS_CATEGORY_MENU);
         updateById(category);
         categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
     }
