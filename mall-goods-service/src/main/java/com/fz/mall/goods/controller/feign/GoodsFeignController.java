@@ -6,8 +6,7 @@ import com.fz.mall.api.goods.dto.OrderSpuInfoDTO;
 import com.fz.mall.api.goods.dto.SkuInfoDTO;
 import com.fz.mall.api.goods.feign.GoodsFeignClient;
 import com.fz.mall.common.data.bo.EsSkuBO;
-import com.fz.mall.common.resp.ResponseEnum;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.goods.pojo.entity.SkuInfo;
 import com.fz.mall.goods.service.SkuInfoService;
 import com.fz.mall.goods.service.SkuSaleAttrValueService;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -36,16 +34,16 @@ public class GoodsFeignController implements GoodsFeignClient {
     private SkuSaleAttrValueService skuSaleAttrValueService;
 
     @Override
-    public ServerResponseEntity<SkuInfoDTO> getSkuInfoById(Long skuId) {
+    public ServRespEntity<SkuInfoDTO> getSkuInfoById(Long skuId) {
         SkuInfo skuInfo = skuInfoService.getById(skuId);
         SkuInfoDTO skuInfoDTO = new SkuInfoDTO();
         if (skuInfo != null)
             BeanUtils.copyProperties(skuInfo, skuInfoDTO);
-        return ServerResponseEntity.success(skuInfoDTO);
+        return ServRespEntity.success(skuInfoDTO);
     }
 
     @Override
-    public ServerResponseEntity<List<SkuInfoDTO>> getSkuInfoByIds(List<Long> skuIds) {
+    public ServRespEntity<List<SkuInfoDTO>> getSkuInfoByIds(List<Long> skuIds) {
 
         List<SkuInfoDTO> skuInfoDTOS = new ArrayList<>();
         if (ObjectUtils.isNotEmpty(skuIds))
@@ -56,35 +54,35 @@ public class GoodsFeignController implements GoodsFeignClient {
                         return skuInfoDTO;
                     }).collect(Collectors.toList());
 
-        return ServerResponseEntity.success(skuInfoDTOS);
+        return ServRespEntity.success(skuInfoDTOS);
     }
 
     @Override
-    public ServerResponseEntity<List<EsSkuBO>> getEsSkuBOsBySpuId(Long spuId) {
-        return ServerResponseEntity.success(spuInfoService.getEsSkuBOsBySpuId(spuId));
+    public ServRespEntity<List<EsSkuBO>> getEsSkuBOsBySpuId(Long spuId) {
+        return ServRespEntity.success(spuInfoService.getEsSkuBOsBySpuId(spuId));
     }
 
     @Override
-    public ServerResponseEntity<List<String>> getSkuSaleAttrs(Long skuId) {
+    public ServRespEntity<List<String>> getSkuSaleAttrs(Long skuId) {
         List<String> attrs = skuSaleAttrValueService.getSaleAttrListBySkuId(skuId);
-        return ServerResponseEntity.success(attrs);
+        return ServRespEntity.success(attrs);
     }
 
     @Override
-    public ServerResponseEntity<Map<Long, List<String>>> getSkuSaleAttrsBySkuIds(List<Long> skuIds) {
+    public ServRespEntity<Map<Long, List<String>>> getSkuSaleAttrsBySkuIds(List<Long> skuIds) {
         Map<Long, List<String>> skuIdSaleAttrValuesMap = skuSaleAttrValueService.getSaleAttrValuesBySkuIds(skuIds);
-        return ServerResponseEntity.success(skuIdSaleAttrValuesMap);
+        return ServRespEntity.success(skuIdSaleAttrValuesMap);
     }
 
     @Override
-    public ServerResponseEntity<List<CartSkuInfoDTO>> getCartSkuInfosByIds(List<Long> skuIds) {
+    public ServRespEntity<List<CartSkuInfoDTO>> getCartSkuInfosByIds(List<Long> skuIds) {
 
         List<CartSkuInfoDTO> cartSkuInfoDTOS = skuInfoService.getCartSkuById(skuIds);
-        return ServerResponseEntity.success(cartSkuInfoDTOS);
+        return ServRespEntity.success(cartSkuInfoDTOS);
     }
 
     @Override
-    public ServerResponseEntity<List<OrderSpuInfoDTO>> getOrderSpuInfoBySkuIds(List<Long> skuIds) {
+    public ServRespEntity<List<OrderSpuInfoDTO>> getOrderSpuInfoBySkuIds(List<Long> skuIds) {
 
         return null;
     }

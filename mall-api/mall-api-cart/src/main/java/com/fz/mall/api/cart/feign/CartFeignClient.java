@@ -2,7 +2,7 @@ package com.fz.mall.api.cart.feign;
 
 import com.fz.mall.api.cart.dto.CartItemDTO;
 import com.fz.mall.common.feign.FeignInsideProperties;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -12,5 +12,5 @@ import java.util.List;
 public interface CartFeignClient {
 
     @GetMapping(FeignInsideProperties.FEIGN_PREFIX + "/cart/getUserCheckedCartItems")
-    ServerResponseEntity<List<CartItemDTO>> getUserCheckedCartItems();
+    ServRespEntity<List<CartItemDTO>> getUserCheckedCartItems();
 }

@@ -2,7 +2,7 @@ package com.fz.mall.stock.controller.app;
 
 import com.fz.mall.common.pojo.dto.SimplePageDTO;
 import com.fz.mall.common.pojo.vo.PageVO;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.stock.pojo.entity.WareInfo;
 import com.fz.mall.stock.service.WareInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,15 +24,15 @@ public class WareInfoController {
     private WareInfoService wareInfoService;
 
     @PostMapping
-    public ServerResponseEntity save(@RequestBody WareInfo wareInfo) {
+    public ServRespEntity save(@RequestBody WareInfo wareInfo) {
         wareInfoService.save(wareInfo);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     @GetMapping
-    public ServerResponseEntity page(SimplePageDTO simplePageDTO) {
+    public ServRespEntity page(SimplePageDTO simplePageDTO) {
 
         PageVO<WareInfo> page = wareInfoService.list(simplePageDTO);
-        return ServerResponseEntity.success(page);
+        return ServRespEntity.success(page);
     }
 }

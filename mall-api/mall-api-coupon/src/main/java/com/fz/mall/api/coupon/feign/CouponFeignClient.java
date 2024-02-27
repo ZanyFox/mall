@@ -4,7 +4,7 @@ import com.fz.mall.api.coupon.dto.SeckillSkuDTO;
 import com.fz.mall.api.coupon.dto.SkuReductionDTO;
 import com.fz.mall.api.coupon.dto.SpuBoundDTO;
 import com.fz.mall.common.feign.FeignInsideProperties;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,12 +16,12 @@ public interface CouponFeignClient {
 
 
     @PostMapping(FeignInsideProperties.FEIGN_PREFIX + "/coupon/spu-bounds/save")
-    ServerResponseEntity saveSpuBounds(@RequestBody SpuBoundDTO spuBoundDTO);
+    ServRespEntity saveSpuBounds(@RequestBody SpuBoundDTO spuBoundDTO);
 
     @PostMapping(FeignInsideProperties.FEIGN_PREFIX + "/coupon/sku-full-reduction")
-    ServerResponseEntity saveSkuReduction(@RequestBody SkuReductionDTO skuReductionDTO);
+    ServRespEntity saveSkuReduction(@RequestBody SkuReductionDTO skuReductionDTO);
 
     @GetMapping(FeignInsideProperties.FEIGN_PREFIX + "/coupon/seckill/{skuId}")
-    ServerResponseEntity<SeckillSkuDTO> getSkuSeckillInfo(@PathVariable("skuId") Long id);
+    ServRespEntity<SeckillSkuDTO> getSkuSeckillInfo(@PathVariable("skuId") Long id);
 
 }

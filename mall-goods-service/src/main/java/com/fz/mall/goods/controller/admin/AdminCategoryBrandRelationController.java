@@ -1,7 +1,7 @@
 package com.fz.mall.goods.controller.admin;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.goods.pojo.entity.CategoryBrandRelation;
 import com.fz.mall.goods.service.CategoryBrandRelationService;
 import com.fz.mall.goods.pojo.vo.BrandVO;
@@ -30,30 +30,30 @@ public class AdminCategoryBrandRelationController {
      *
      */
     @GetMapping("/list")
-    public ServerResponseEntity list(@RequestParam("brandId") Long brandId) {
+    public ServRespEntity list(@RequestParam("brandId") Long brandId) {
 
         LambdaQueryWrapper<CategoryBrandRelation> queryWrapper = new LambdaQueryWrapper<>();
         List<CategoryBrandRelation> relations =
                 categoryBrandRelationService.list(queryWrapper.eq(CategoryBrandRelation::getBrandId, brandId));
-        return ServerResponseEntity.success(relations);
+        return ServRespEntity.success(relations);
     }
 
     @GetMapping("/brand/list")
-    private ServerResponseEntity brandList(@RequestParam("categoryId") Long categoryId) {
+    private ServRespEntity brandList(@RequestParam("categoryId") Long categoryId) {
         List<BrandVO> brands = categoryBrandRelationService.listBrand(categoryId);
-        return ServerResponseEntity.success(brands);
+        return ServRespEntity.success(brands);
     }
 
     @PostMapping
-    public ServerResponseEntity save(@RequestBody CategoryBrandRelation categoryBrandRelation) {
+    public ServRespEntity save(@RequestBody CategoryBrandRelation categoryBrandRelation) {
         categoryBrandRelationService.saveDetail(categoryBrandRelation);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     @DeleteMapping
-    public ServerResponseEntity delete(@RequestBody Long[] ids) {
+    public ServRespEntity delete(@RequestBody Long[] ids) {
         categoryBrandRelationService.removeBatchByIds(Arrays.asList(ids));
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
 }

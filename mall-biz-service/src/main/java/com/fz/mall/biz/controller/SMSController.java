@@ -3,7 +3,7 @@ package com.fz.mall.biz.controller;
 
 import com.fz.mall.api.biz.feign.BizSMSFeignClient;
 import com.fz.mall.biz.service.SMSService;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.common.resp.ResponseEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +25,8 @@ public class SMSController implements BizSMSFeignClient {
      * @return
      */
     @Override
-    public ServerResponseEntity<String> sendVerificationCode(String phoneNum, String code) {
+    public ServRespEntity<String> sendVerificationCode(String phoneNum, String code) {
         Boolean success = smsService.sendVerificationCode(phoneNum, code);
-        return success ? ServerResponseEntity.success("发送验证码成功") : ServerResponseEntity.fail(ResponseEnum.SEND_VERIFICATION_CODE_ERROR);
+        return success ? ServRespEntity.success("发送验证码成功") : ServRespEntity.fail(ResponseEnum.SEND_VERIFICATION_CODE_ERROR);
     }
 }

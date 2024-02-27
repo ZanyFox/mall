@@ -6,7 +6,7 @@ import com.fz.mall.common.context.ContextHolder;
 import com.fz.mall.common.data.vo.UserLoginVO;
 import com.fz.mall.common.pojo.dto.SimplePageDTO;
 import com.fz.mall.common.pojo.vo.PageVO;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.user.entity.MemberReceiveAddress;
 import com.fz.mall.user.service.MemberLevelService;
 import com.fz.mall.user.service.MemberReceiveAddressService;
@@ -31,39 +31,39 @@ public class MemberFeignController implements MemberFeignClient {
 
 
     @Override
-    public ServerResponseEntity<PageVO<MemberLevelDTO>> getMemberLevel(SimplePageDTO simplePageDTO) {
+    public ServRespEntity<PageVO<MemberLevelDTO>> getMemberLevel(SimplePageDTO simplePageDTO) {
         PageVO<MemberLevelDTO> page = memberLevelService.page(simplePageDTO);
-        return ServerResponseEntity.success(page);
+        return ServRespEntity.success(page);
     }
 
     @Override
-    public ServerResponseEntity register(UserRegisterDTO userRegisterDTO) {
+    public ServRespEntity register(UserRegisterDTO userRegisterDTO) {
 
         memberService.register(userRegisterDTO);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     @Override
-    public ServerResponseEntity<Boolean> isMobileUnique(String mobile) {
+    public ServRespEntity<Boolean> isMobileUnique(String mobile) {
         boolean isUnique = memberService.isMobileUnique(mobile);
-        return ServerResponseEntity.success(isUnique);
+        return ServRespEntity.success(isUnique);
     }
 
     @Override
-    public ServerResponseEntity<UserLoginVO> login(UserLoginDTO userLoginDTO) {
+    public ServRespEntity<UserLoginVO> login(UserLoginDTO userLoginDTO) {
         UserLoginVO userLoginVO = memberService.login(userLoginDTO);
-        return ServerResponseEntity.success(userLoginVO);
+        return ServRespEntity.success(userLoginVO);
     }
 
     @Override
-    public ServerResponseEntity<UserLoginVO> oauthLogin(UserOauthLoginDTO userOauthLoginDTO) {
+    public ServRespEntity<UserLoginVO> oauthLogin(UserOauthLoginDTO userOauthLoginDTO) {
         UserLoginVO userLoginVO = memberService.oauthLogin(userOauthLoginDTO);
         log.info(userLoginVO.toString());
-        return ServerResponseEntity.success(userLoginVO);
+        return ServRespEntity.success(userLoginVO);
     }
 
     @Override
-    public ServerResponseEntity<List<MemberReceiveAddressDTO>> getCurrentUserAddress() {
+    public ServRespEntity<List<MemberReceiveAddressDTO>> getCurrentUserAddress() {
 
         Long uid = ContextHolder.getUser().getUid();
         List<MemberReceiveAddress> addresses = memberReceiveAddressService.lambdaQuery().eq(MemberReceiveAddress::getMemberId, uid).list();
@@ -74,15 +74,15 @@ public class MemberFeignController implements MemberFeignClient {
         }).collect(Collectors.toList());
 
         log.info("uid: {} addr info: {}", uid, addressDTOS);
-        return ServerResponseEntity.success(addressDTOS);
+        return ServRespEntity.success(addressDTOS);
     }
 
     @Override
-    public ServerResponseEntity<MemberReceiveAddressDTO> getAddressById(Long addrId) {
+    public ServRespEntity<MemberReceiveAddressDTO> getAddressById(Long addrId) {
         MemberReceiveAddress addr = memberReceiveAddressService.getById(addrId);
         MemberReceiveAddressDTO memberReceiveAddressDTO = new MemberReceiveAddressDTO();
         BeanUtils.copyProperties(addr, memberReceiveAddressDTO);
-        return ServerResponseEntity.success(memberReceiveAddressDTO);
+        return ServRespEntity.success(memberReceiveAddressDTO);
     }
 
 }

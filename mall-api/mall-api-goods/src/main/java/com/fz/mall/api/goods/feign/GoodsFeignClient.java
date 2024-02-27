@@ -5,7 +5,7 @@ import com.fz.mall.api.goods.dto.OrderSpuInfoDTO;
 import com.fz.mall.api.goods.dto.SkuInfoDTO;
 import com.fz.mall.common.data.bo.EsSkuBO;
 import com.fz.mall.common.feign.FeignInsideProperties;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +24,7 @@ public interface GoodsFeignClient {
      * @PathVariable("skuId") 这里需要指定value 否则会报错
      */
     @GetMapping(FeignInsideProperties.FEIGN_PREFIX + "/goods/sku-info/{skuId}")
-    ServerResponseEntity<SkuInfoDTO> getSkuInfoById(@PathVariable("skuId") Long skuId);
+    ServRespEntity<SkuInfoDTO> getSkuInfoById(@PathVariable("skuId") Long skuId);
 
     /**
      * 批量获取商品信息
@@ -32,7 +32,7 @@ public interface GoodsFeignClient {
      * @return
      */
     @GetMapping(FeignInsideProperties.FEIGN_PREFIX + "/goods/sku-info}")
-    ServerResponseEntity<List<SkuInfoDTO>> getSkuInfoByIds(@RequestBody List<Long> skuIds);
+    ServRespEntity<List<SkuInfoDTO>> getSkuInfoByIds(@RequestBody List<Long> skuIds);
 
     /**
      * 根据spuId 获取ES存储对象
@@ -41,7 +41,7 @@ public interface GoodsFeignClient {
      * @return
      */
     @GetMapping(FeignInsideProperties.FEIGN_PREFIX + "/goods/spu-info/getEsSkuBOsBySpuId")
-    ServerResponseEntity<List<EsSkuBO>> getEsSkuBOsBySpuId(@RequestParam("spuId") Long spuId);
+    ServRespEntity<List<EsSkuBO>> getEsSkuBOsBySpuId(@RequestParam("spuId") Long spuId);
 
     /**
      * 根据sku 获取销售属性值
@@ -50,17 +50,17 @@ public interface GoodsFeignClient {
      * @return
      */
     @GetMapping(FeignInsideProperties.FEIGN_PREFIX + "/goods/attr/{skuId}")
-    ServerResponseEntity<List<String>> getSkuSaleAttrs(@PathVariable("skuId") Long skuId);
+    ServRespEntity<List<String>> getSkuSaleAttrs(@PathVariable("skuId") Long skuId);
 
     /**
      * 根据sku 批量获取销售属性值
      */
     @GetMapping(FeignInsideProperties.FEIGN_PREFIX + "/goods/getAttrValuesBySkuIds")
-    ServerResponseEntity<Map<Long, List<String>>> getSkuSaleAttrsBySkuIds(@RequestBody List<Long> skuIds);
+    ServRespEntity<Map<Long, List<String>>> getSkuSaleAttrsBySkuIds(@RequestBody List<Long> skuIds);
 
     @GetMapping(FeignInsideProperties.FEIGN_PREFIX + "/goods/cartSkus")
-    ServerResponseEntity<List<CartSkuInfoDTO>> getCartSkuInfosByIds(@RequestBody List<Long> skuIds);
+    ServRespEntity<List<CartSkuInfoDTO>> getCartSkuInfosByIds(@RequestBody List<Long> skuIds);
 
     @GetMapping(FeignInsideProperties.FEIGN_PREFIX + "/goods/orderSpuInfo")
-    ServerResponseEntity<List<OrderSpuInfoDTO>> getOrderSpuInfoBySkuIds(@RequestBody List<Long> skuIds);
+    ServRespEntity<List<OrderSpuInfoDTO>> getOrderSpuInfoBySkuIds(@RequestBody List<Long> skuIds);
 }

@@ -1,7 +1,7 @@
 package com.fz.mall.user.controller.app;
 
 import com.fz.mall.api.user.dto.UserRegisterDTO;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.user.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,14 +25,14 @@ public class UserController {
     private MemberService memberService;
 
     @GetMapping("/list")
-    public ServerResponseEntity list() {
-        return ServerResponseEntity.success(memberService.list());
+    public ServRespEntity list() {
+        return ServRespEntity.success(memberService.list());
     }
 
     @PostMapping("/register")
-    public ServerResponseEntity register(UserRegisterDTO userRegisterDTO) {
+    public ServRespEntity register(UserRegisterDTO userRegisterDTO) {
         memberService.register(userRegisterDTO);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
 

@@ -2,7 +2,7 @@ package com.fz.mall.stock.controller.admin;
 
 import com.fz.mall.common.pojo.dto.SimplePageDTO;
 import com.fz.mall.common.pojo.vo.PageVO;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.stock.pojo.entity.WareOrderTask;
 import com.fz.mall.stock.service.WareOrderTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,27 +26,27 @@ public class AdminWareOrderTaskController {
     private WareOrderTaskService wareOrderTaskService;
 
     @GetMapping("/list")
-    public ServerResponseEntity list(SimplePageDTO simplePageDTO) {
+    public ServRespEntity list(SimplePageDTO simplePageDTO) {
         PageVO<WareOrderTask> page = wareOrderTaskService.page(simplePageDTO);
-        return ServerResponseEntity.success(page);
+        return ServRespEntity.success(page);
     }
 
     @PostMapping
-    public ServerResponseEntity save(@RequestBody WareOrderTask wareOrderTask) {
+    public ServRespEntity save(@RequestBody WareOrderTask wareOrderTask) {
         wareOrderTaskService.save(wareOrderTask);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
 
     @PutMapping
-    public ServerResponseEntity update(@RequestBody WareOrderTask wareOrderTask) {
+    public ServRespEntity update(@RequestBody WareOrderTask wareOrderTask) {
         wareOrderTaskService.updateById(wareOrderTask);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     @DeleteMapping
-    public ServerResponseEntity delete(@RequestBody List<Long> ids) {
+    public ServRespEntity delete(@RequestBody List<Long> ids) {
         wareOrderTaskService.removeBatchByIds(ids);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 }

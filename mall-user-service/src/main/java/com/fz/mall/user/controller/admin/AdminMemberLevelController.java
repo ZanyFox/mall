@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fz.mall.common.pojo.dto.SimplePageDTO;
 import com.fz.mall.common.database.util.PageUtil;
 import com.fz.mall.common.pojo.vo.PageVO;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.user.entity.MemberLevel;
 import com.fz.mall.user.service.MemberLevelService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,34 +21,34 @@ public class AdminMemberLevelController {
     private MemberLevelService memberLevelService;
 
     @GetMapping("/list")
-    public ServerResponseEntity page(SimplePageDTO simplePageDTO) {
+    public ServRespEntity page(SimplePageDTO simplePageDTO) {
         Page<MemberLevel> page = memberLevelService.page(PageUtil.newPage(simplePageDTO));
         PageVO<MemberLevel> memberLevelPageVO = PageUtil.pageVO(page);
-        return ServerResponseEntity.success(memberLevelPageVO);
+        return ServRespEntity.success(memberLevelPageVO);
     }
 
     @DeleteMapping
-    public ServerResponseEntity delete(List<Long> ids) {
+    public ServRespEntity delete(List<Long> ids) {
         memberLevelService.removeBatchByIds(ids);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     @GetMapping("/{memberLevelId}")
-    public ServerResponseEntity getMemberLevelInfo(@PathVariable Long memberLevelId) {
+    public ServRespEntity getMemberLevelInfo(@PathVariable Long memberLevelId) {
         MemberLevel memberLevel = memberLevelService.getById(memberLevelId);
-        return ServerResponseEntity.success(memberLevel);
+        return ServRespEntity.success(memberLevel);
     }
 
     @PostMapping
-    public ServerResponseEntity save(@RequestBody MemberLevel memberLevel) {
+    public ServRespEntity save(@RequestBody MemberLevel memberLevel) {
         memberLevelService.save(memberLevel);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     @PutMapping
-    public ServerResponseEntity update(@RequestBody MemberLevel memberLevel) {
+    public ServRespEntity update(@RequestBody MemberLevel memberLevel) {
         memberLevelService.updateById(memberLevel);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
 }

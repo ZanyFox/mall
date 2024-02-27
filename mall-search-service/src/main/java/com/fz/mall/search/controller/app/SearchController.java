@@ -1,6 +1,6 @@
 package com.fz.mall.search.controller.app;
 
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.search.pojo.dto.SearchParamDTO;
 import com.fz.mall.search.pojo.vo.SearchResultVO;
 import com.fz.mall.search.service.impl.MallSearchService;
@@ -15,9 +15,9 @@ public class SearchController {
     private MallSearchService mallSearchService;
 
     @GetMapping
-    public ServerResponseEntity search(SearchParamDTO searchParamDTO) {
+    public ServRespEntity search(SearchParamDTO searchParamDTO) {
 
         SearchResultVO search = mallSearchService.search(searchParamDTO);
-        return ServerResponseEntity.success(search);
+        return ServRespEntity.success(search);
     }
 }

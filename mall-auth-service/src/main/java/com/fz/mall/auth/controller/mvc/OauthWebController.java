@@ -8,7 +8,7 @@ import com.fz.mall.api.user.dto.UserOauthLoginDTO;
 import com.fz.mall.api.user.feign.MemberFeignClient;
 import com.fz.mall.common.data.vo.UserLoginVO;
 import com.fz.mall.common.constant.MallSessionConstants;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -72,9 +72,9 @@ public class OauthWebController {
             }
             return null;
         }).thenApply(userOauthLoginDTO -> {
-            ServerResponseEntity<UserLoginVO> userLoginVOServerResponseEntity = memberFeignClient.oauthLogin(userOauthLoginDTO);
-            if (userLoginVOServerResponseEntity.getSuccess()) {
-                return userLoginVOServerResponseEntity.getData();
+            ServRespEntity<UserLoginVO> userLoginVOServRespEntity = memberFeignClient.oauthLogin(userOauthLoginDTO);
+            if (userLoginVOServRespEntity.getSuccess()) {
+                return userLoginVOServRespEntity.getData();
             }
             return null;
         });

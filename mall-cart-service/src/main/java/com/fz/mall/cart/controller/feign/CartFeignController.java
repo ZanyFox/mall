@@ -4,7 +4,7 @@ import com.fz.mall.api.cart.dto.CartItemDTO;
 import com.fz.mall.api.cart.feign.CartFeignClient;
 import com.fz.mall.cart.model.CartItem;
 import com.fz.mall.cart.service.CartService;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +20,7 @@ public class CartFeignController implements CartFeignClient {
     private CartService cartService;
 
     @Override
-    public ServerResponseEntity<List<CartItemDTO>> getUserCheckedCartItems() {
+    public ServRespEntity<List<CartItemDTO>> getUserCheckedCartItems() {
 
         List<CartItem> userCartItems = cartService.getUserCheckedCartItems();
 
@@ -29,6 +29,6 @@ public class CartFeignController implements CartFeignClient {
             BeanUtils.copyProperties(item, cartItemDTO);
             return cartItemDTO;
         }).collect(Collectors.toList());
-        return ServerResponseEntity.success(cartItemDTOS);
+        return ServRespEntity.success(cartItemDTOS);
     }
 }

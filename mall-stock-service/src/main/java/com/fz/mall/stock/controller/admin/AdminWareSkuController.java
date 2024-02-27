@@ -1,7 +1,7 @@
 package com.fz.mall.stock.controller.admin;
 
 import com.fz.mall.common.pojo.vo.PageVO;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.stock.pojo.dto.QuerySkuStockDTO;
 import com.fz.mall.stock.pojo.entity.WareSku;
 import com.fz.mall.stock.service.WareSkuService;
@@ -26,22 +26,22 @@ public class AdminWareSkuController {
     private WareSkuService wareSkuService;
 
     @GetMapping("/list")
-    public ServerResponseEntity page(QuerySkuStockDTO skuStockDTO) {
+    public ServRespEntity page(QuerySkuStockDTO skuStockDTO) {
 
         PageVO<WareSku> page = wareSkuService.page(skuStockDTO);
-        return ServerResponseEntity.success(page);
+        return ServRespEntity.success(page);
     }
 
     @PutMapping
-    public ServerResponseEntity update(@RequestBody WareSku wareSku) {
+    public ServRespEntity update(@RequestBody WareSku wareSku) {
         wareSkuService.updateById(wareSku);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     @DeleteMapping
-    public ServerResponseEntity delete(@RequestBody List<Long> ids) {
+    public ServRespEntity delete(@RequestBody List<Long> ids) {
         wareSkuService.removeBatchByIds(ids);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
 }

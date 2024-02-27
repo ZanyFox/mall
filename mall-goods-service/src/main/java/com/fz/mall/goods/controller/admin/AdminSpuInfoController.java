@@ -1,7 +1,7 @@
 package com.fz.mall.goods.controller.admin;
 
 import com.fz.mall.common.pojo.vo.PageVO;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.goods.pojo.dto.SpuPageDTO;
 import com.fz.mall.goods.pojo.dto.SpuSaveDTO;
 import com.fz.mall.goods.pojo.dto.UpdateSpuStatusDTO;
@@ -20,21 +20,21 @@ public class AdminSpuInfoController {
     private SpuInfoService spuInfoService;
 
     @GetMapping("/list")
-    public ServerResponseEntity list(SpuPageDTO spuPageDTO) {
+    public ServRespEntity list(SpuPageDTO spuPageDTO) {
         PageVO<SpuInfo> pageVO = spuInfoService.list(spuPageDTO);
-        return ServerResponseEntity.success(pageVO);
+        return ServRespEntity.success(pageVO);
     }
 
     @PostMapping
-    public ServerResponseEntity save(@RequestBody SpuSaveDTO spuSaveDTO) {
+    public ServRespEntity save(@RequestBody SpuSaveDTO spuSaveDTO) {
         spuInfoService.save(spuSaveDTO);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     @PutMapping("/status")
-    public ServerResponseEntity update(@Validated @RequestBody UpdateSpuStatusDTO updateSpuStatusDTO) {
+    public ServRespEntity update(@Validated @RequestBody UpdateSpuStatusDTO updateSpuStatusDTO) {
         spuInfoService.updateSpuStatus(updateSpuStatusDTO);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
 }

@@ -1,6 +1,6 @@
 package com.fz.mall.coupon.controller.app;
 
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.coupon.pojo.SeckillSkuVO;
 import com.fz.mall.coupon.service.SeckillService;
 import com.fz.mall.coupon.service.SeckillSessionService;
@@ -23,22 +23,22 @@ public class SeckillController {
 
 
     @PostMapping("/upload")
-    public ServerResponseEntity uploadSeckillSku() {
+    public ServRespEntity uploadSeckillSku() {
         seckillSessionService.uploadSeckillSku();
-        return ServerResponseEntity.success("上架秒杀商品成功");
+        return ServRespEntity.success("上架秒杀商品成功");
     }
 
     @GetMapping
-    public ServerResponseEntity getSeckillSkus() {
+    public ServRespEntity getSeckillSkus() {
         List<SeckillSkuVO> seckillSkus = seckillService.getSeckillSkus();
-        return ServerResponseEntity.success(seckillSkus);
+        return ServRespEntity.success(seckillSkus);
     }
 
 
     @PostMapping("/seckill")
-    public ServerResponseEntity seckill(String killId, String key, Integer num) {
+    public ServRespEntity seckill(String killId, String key, Integer num) {
 
         seckillService.seckill(killId, key, num);
-        return ServerResponseEntity.success("秒杀成功");
+        return ServRespEntity.success("秒杀成功");
     }
 }

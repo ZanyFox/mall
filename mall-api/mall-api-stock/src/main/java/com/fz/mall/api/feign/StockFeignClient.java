@@ -5,7 +5,7 @@ import com.fz.mall.api.dto.FareDTO;
 import com.fz.mall.api.dto.LockStockDTO;
 import com.fz.mall.api.dto.SkuQuantityDTO;
 import com.fz.mall.common.feign.FeignInsideProperties;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,18 +19,18 @@ import java.util.Map;
 public interface StockFeignClient {
 
     @GetMapping(FeignInsideProperties.FEIGN_PREFIX + "/stock/getHasStockBySkuIds")
-    ServerResponseEntity<Map<Long, Boolean>> getSkuHasStockBySkuIds(@RequestBody List<Long> skuIds);
+    ServRespEntity<Map<Long, Boolean>> getSkuHasStockBySkuIds(@RequestBody List<Long> skuIds);
 
     @GetMapping(FeignInsideProperties.FEIGN_PREFIX + "/stock/getStockBySkuIds")
-    ServerResponseEntity<Map<Long, Integer>> getSkuStockBySkuIds(@RequestBody List<Long> skuIds);
+    ServRespEntity<Map<Long, Integer>> getSkuStockBySkuIds(@RequestBody List<Long> skuIds);
 
     @GetMapping(FeignInsideProperties.FEIGN_PREFIX + "/stock/getWareHasStock")
-    ServerResponseEntity<Map<Long, List<Long>>> getWareHasStockBySkuQuantity(@RequestBody List<SkuQuantityDTO> skuQuantityDTOS);
+    ServRespEntity<Map<Long, List<Long>>> getWareHasStockBySkuQuantity(@RequestBody List<SkuQuantityDTO> skuQuantityDTOS);
 
     @GetMapping(FeignInsideProperties.FEIGN_PREFIX + "/stock/fare")
-    ServerResponseEntity<FareDTO> getFareByAddress(@RequestParam("sourceAddrId") Long sourceAddrId, @RequestParam("destAddrId") Long destAddrId);
+    ServRespEntity<FareDTO> getFareByAddress(@RequestParam("sourceAddrId") Long sourceAddrId, @RequestParam("destAddrId") Long destAddrId);
 
     @PostMapping(FeignInsideProperties.FEIGN_PREFIX + "/stock/lock")
-    ServerResponseEntity updateStockLock(@RequestBody LockStockDTO lockStockDTO);
+    ServRespEntity updateStockLock(@RequestBody LockStockDTO lockStockDTO);
 
 }

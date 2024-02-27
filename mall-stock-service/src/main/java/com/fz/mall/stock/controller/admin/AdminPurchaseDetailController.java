@@ -1,7 +1,7 @@
 package com.fz.mall.stock.controller.admin;
 
 import com.fz.mall.common.pojo.vo.PageVO;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.stock.pojo.dto.QueryPurchaseDetailDTO;
 import com.fz.mall.stock.pojo.entity.PurchaseDetail;
 import com.fz.mall.stock.service.PurchaseDetailService;
@@ -29,33 +29,33 @@ public class AdminPurchaseDetailController {
 
 
     @GetMapping("/list")
-    public ServerResponseEntity list(QueryPurchaseDetailDTO queryPurchaseDetailDTO) {
+    public ServRespEntity list(QueryPurchaseDetailDTO queryPurchaseDetailDTO) {
         PageVO<PurchaseDetail> page = purchaseDetailService.page(queryPurchaseDetailDTO);
-        return ServerResponseEntity.success(page);
+        return ServRespEntity.success(page);
     }
 
     @GetMapping("/{purchaseId}")
-    public ServerResponseEntity getPurchaseDetailById(@PathVariable Long purchaseId) {
+    public ServRespEntity getPurchaseDetailById(@PathVariable Long purchaseId) {
         PurchaseDetail purchaseDetail = purchaseDetailService.getById(purchaseId);
-        return ServerResponseEntity.success(purchaseDetail);
+        return ServRespEntity.success(purchaseDetail);
     }
 
     @PostMapping
-    public ServerResponseEntity save(@RequestBody PurchaseDetail detail) {
+    public ServRespEntity save(@RequestBody PurchaseDetail detail) {
         purchaseDetailService.save(detail);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     @DeleteMapping
-    public ServerResponseEntity delete(@RequestBody List<Long> ids) {
+    public ServRespEntity delete(@RequestBody List<Long> ids) {
         purchaseDetailService.removeBatchByIds(ids);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     @PutMapping
-    public ServerResponseEntity update(@RequestBody PurchaseDetail detail) {
+    public ServRespEntity update(@RequestBody PurchaseDetail detail) {
         purchaseDetailService.updateById(detail);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
 

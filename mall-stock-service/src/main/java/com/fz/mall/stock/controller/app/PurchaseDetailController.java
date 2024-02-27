@@ -1,7 +1,7 @@
 package com.fz.mall.stock.controller.app;
 
 import com.fz.mall.common.pojo.vo.PageVO;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.stock.pojo.dto.QueryPurchaseDetailDTO;
 import com.fz.mall.stock.pojo.entity.PurchaseDetail;
 import com.fz.mall.stock.service.PurchaseDetailService;
@@ -27,9 +27,9 @@ public class PurchaseDetailController {
     private PurchaseDetailService purchaseDetailService;
 
     @GetMapping("/page")
-    private ServerResponseEntity page(QueryPurchaseDetailDTO queryPurchaseDetailDTO) {
+    private ServRespEntity page(QueryPurchaseDetailDTO queryPurchaseDetailDTO) {
         PageVO<PurchaseDetail> page = purchaseDetailService.page(queryPurchaseDetailDTO);
-        return ServerResponseEntity.success(page);
+        return ServRespEntity.success(page);
     }
 
 

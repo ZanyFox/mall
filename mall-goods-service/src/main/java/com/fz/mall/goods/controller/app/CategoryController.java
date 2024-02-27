@@ -1,6 +1,6 @@
 package com.fz.mall.goods.controller.app;
 
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.goods.pojo.entity.Category;
 import com.fz.mall.goods.pojo.vo.CategoryTitleVO;
 import com.fz.mall.goods.service.CategoryService;
@@ -28,9 +28,9 @@ public class CategoryController {
 
 
     @GetMapping("/list")
-    public ServerResponseEntity<?> listAll() {
+    public ServRespEntity<?> listAll() {
         List<Category> categories = categoryService.listAll();
-        return ServerResponseEntity.success(categories);
+        return ServRespEntity.success(categories);
     }
 
     @GetMapping("/menu")
@@ -40,14 +40,14 @@ public class CategoryController {
     }
 
     @PostMapping("/delete")
-    public ServerResponseEntity<Void> delete(@RequestBody Long[] ids) {
+    public ServRespEntity<Void> delete(@RequestBody Long[] ids) {
         categoryService.removeCategoryByIds(Arrays.asList(ids));
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     @PostMapping("/save")
-    public ServerResponseEntity<Void> save() {
-        return ServerResponseEntity.success();
+    public ServRespEntity<Void> save() {
+        return ServRespEntity.success();
     }
 
 }

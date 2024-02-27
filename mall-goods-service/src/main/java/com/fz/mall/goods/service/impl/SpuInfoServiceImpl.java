@@ -11,7 +11,7 @@ import com.fz.mall.common.data.bo.EsSkuBO;
 import com.fz.mall.common.database.util.PageUtil;
 import com.fz.mall.common.pojo.vo.PageVO;
 import com.fz.mall.common.rabbitmq.constant.GoodsListenerConstants;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.common.resp.ResponseEnum;
 import com.fz.mall.goods.constant.SpuStatusEnum;
 import com.fz.mall.goods.mapper.SpuInfoMapper;
@@ -192,8 +192,8 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoMapper, SpuInfo> impl
                 // 判断满减时候有意义
 
                 if (skuReductionDTO.getFullPrice().compareTo(BigDecimal.ZERO) > 0 || (skuReductionDTO.getFullCount() != null && skuReductionDTO.getFullCount() > 0)) {
-                    ServerResponseEntity serverResponseEntity = couponFeignClient.saveSkuReduction(skuReductionDTO);
-                    if (!Objects.equals(serverResponseEntity.getCode(), ResponseEnum.SUCCESS.getCode())) {
+                    ServRespEntity servRespEntity = couponFeignClient.saveSkuReduction(skuReductionDTO);
+                    if (!Objects.equals(servRespEntity.getCode(), ResponseEnum.SUCCESS.getCode())) {
                         log.error("远程调用出现异常");
                     }
                 }
@@ -204,8 +204,8 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoMapper, SpuInfo> impl
         SpuBoundDTO spuBoundDTO = new SpuBoundDTO();
         BeanUtils.copyProperties(bounds, spuBoundDTO);
         spuBoundDTO.setSpuId(spuInfo.getId());
-        ServerResponseEntity serverResponseEntity = couponFeignClient.saveSpuBounds(spuBoundDTO);
-        if (!Objects.equals(serverResponseEntity.getCode(), ResponseEnum.SUCCESS.getCode())) {
+        ServRespEntity servRespEntity = couponFeignClient.saveSpuBounds(spuBoundDTO);
+        if (!Objects.equals(servRespEntity.getCode(), ResponseEnum.SUCCESS.getCode())) {
             log.error("远程调用出现异常");
         }
 
@@ -270,7 +270,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoMapper, SpuInfo> impl
 
 
         try {
-            ServerResponseEntity<Map<Long, Boolean>> skuHasStockResponseEntity = stockFeignClient.getSkuHasStockBySkuIds(skuIds);
+            ServRespEntity<Map<Long, Boolean>> skuHasStockResponseEntity = stockFeignClient.getSkuHasStockBySkuIds(skuIds);
             skuHasStockMap = skuHasStockResponseEntity.getData();
         } catch (Exception e) {
             log.error("远程调用异常：{}", e.toString());

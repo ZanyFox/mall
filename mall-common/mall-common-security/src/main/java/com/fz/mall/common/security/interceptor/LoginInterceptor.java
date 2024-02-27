@@ -5,7 +5,7 @@ import com.fz.mall.common.context.ContextHolder;
 import com.fz.mall.common.context.UserContext;
 import com.fz.mall.common.redis.constant.TokenCacheConstants;
 import com.fz.mall.common.resp.ResponseEnum;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.common.security.constant.SecurityConstants;
 import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
@@ -82,7 +82,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.getWriter().write(JSON.toJSONString(ServerResponseEntity.fail(ResponseEnum.ACCESS_PERMISSION_ERROR)));
+        response.getWriter().write(JSON.toJSONString(ServRespEntity.fail(ResponseEnum.ACCESS_PERMISSION_ERROR)));
     }
 
 

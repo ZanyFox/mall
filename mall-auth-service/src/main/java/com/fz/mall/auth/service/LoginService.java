@@ -1,7 +1,6 @@
 package com.fz.mall.auth.service;
 
 import cn.hutool.core.util.IdUtil;
-import com.alibaba.fastjson2.JSON;
 import com.fz.mall.api.user.dto.UserLoginDTO;
 import com.fz.mall.api.user.feign.MemberFeignClient;
 import com.fz.mall.auth.pojo.param.UserLoginParam;
@@ -10,7 +9,7 @@ import com.fz.mall.common.data.vo.UserLoginVO;
 import com.fz.mall.common.exception.MallServerException;
 import com.fz.mall.common.redis.RedisCache;
 import com.fz.mall.common.redis.constant.TokenCacheConstants;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.common.resp.ResponseEnum;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -34,7 +33,7 @@ public class LoginService {
         userLoginDTO.setAccount(param.getAccount());
         userLoginDTO.setPassword(param.getPassword());
 
-        ServerResponseEntity<UserLoginVO> response = memberFeignClient.login(userLoginDTO);
+        ServRespEntity<UserLoginVO> response = memberFeignClient.login(userLoginDTO);
         if (!response.getSuccess())
             throw new MallServerException(ResponseEnum.getResponseEnumByCode(response.getCode()));
         UserLoginVO userLoginVO = response.getData();

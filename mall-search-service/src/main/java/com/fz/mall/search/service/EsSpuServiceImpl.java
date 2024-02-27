@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.fz.mall.api.goods.feign.GoodsFeignClient;
 import com.fz.mall.common.data.bo.EsSkuBO;
 import com.fz.mall.common.exception.MallServerException;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.search.constant.EsConstants;
 import com.fz.mall.search.service.impl.EsSpuService;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ public class EsSpuServiceImpl implements EsSpuService {
 
         List<EsSkuBO> esSkuBOS = null;
         try {
-            ServerResponseEntity<List<EsSkuBO>> esSkuBOsBySpuId = goodsFeignClient.getEsSkuBOsBySpuId(spuId);
+            ServRespEntity<List<EsSkuBO>> esSkuBOsBySpuId = goodsFeignClient.getEsSkuBOsBySpuId(spuId);
             if (esSkuBOsBySpuId.getSuccess()) {
                 esSkuBOS = esSkuBOsBySpuId.getData();
             }

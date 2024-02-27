@@ -15,7 +15,7 @@ import com.fz.mall.common.redis.constant.CartCacheConstants;
 import com.fz.mall.common.exception.MallServerException;
 import com.fz.mall.common.context.ContextHolder;
 import com.fz.mall.common.redis.RedisCache;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.common.resp.ResponseEnum;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +57,7 @@ public class CartServiceImpl implements CartService {
         SkuQuantityDTO skuQuantityDTO = new SkuQuantityDTO();
         skuQuantityDTO.setSkuId(skuId);
         skuQuantityDTO.setQuantity(quantity);
-        ServerResponseEntity<Map<Long, List<Long>>> wareHasStockBySkuQuantityResp = stockFeignClient.getWareHasStockBySkuQuantity(Collections.singletonList(skuQuantityDTO));
+        ServRespEntity<Map<Long, List<Long>>> wareHasStockBySkuQuantityResp = stockFeignClient.getWareHasStockBySkuQuantity(Collections.singletonList(skuQuantityDTO));
         Map<Long, List<Long>> skuWareIdsMap = wareHasStockBySkuQuantityResp.getData();
 
         if (ObjectUtils.isEmpty(skuWareIdsMap.get(skuId)))
@@ -188,12 +188,12 @@ public class CartServiceImpl implements CartService {
 
         List<Long> skuIds = skuQuantityDTOS.stream().map(SkuQuantityDTO::getSkuId).collect(Collectors.toList());
 
-        ServerResponseEntity<Map<Long, List<Long>>> wareHasStockBySkuQuantityResp = stockFeignClient
+        ServRespEntity<Map<Long, List<Long>>> wareHasStockBySkuQuantityResp = stockFeignClient
                 .getWareHasStockBySkuQuantity(skuQuantityDTOS);
         Map<Long, List<Long>> skuWareIdsMap = wareHasStockBySkuQuantityResp.getData();
 
 
-        ServerResponseEntity<Map<Long, List<String>>> skuSaleAttrsMapResp = goodsFeignClient.getSkuSaleAttrsBySkuIds(skuIds);
+        ServRespEntity<Map<Long, List<String>>> skuSaleAttrsMapResp = goodsFeignClient.getSkuSaleAttrsBySkuIds(skuIds);
         Map<Long, List<String>> skuIdSaleAttrValuesMap = skuSaleAttrsMapResp.getData();
 
 
@@ -210,7 +210,7 @@ public class CartServiceImpl implements CartService {
 
     private List<CartItem> buildCartItems(List<Long> skuIds) {
 
-        ServerResponseEntity<List<CartSkuInfoDTO>> cartSkuInfosResp = goodsFeignClient.getCartSkuInfosByIds(skuIds);
+        ServRespEntity<List<CartSkuInfoDTO>> cartSkuInfosResp = goodsFeignClient.getCartSkuInfosByIds(skuIds);
         List<CartSkuInfoDTO> cartSkus = cartSkuInfosResp.getData();
 
         return cartSkus.stream().map(cartSkuInfoDTO -> {
@@ -227,7 +227,7 @@ public class CartServiceImpl implements CartService {
 
     private CartItem buildCartItem(Long skuId) {
 
-        ServerResponseEntity<SkuInfoDTO> skuInfoResp = goodsFeignClient.getSkuInfoById(skuId);
+        ServRespEntity<SkuInfoDTO> skuInfoResp = goodsFeignClient.getSkuInfoById(skuId);
         if (!skuInfoResp.getSuccess())
             throw new MallServerException(skuInfoResp.getCode());
         SkuInfoDTO skuInfo = skuInfoResp.getData();
@@ -242,7 +242,7 @@ public class CartServiceImpl implements CartService {
         cartItem.setPrice(skuInfo.getPrice());
         cartItem.setSkuId(skuId);
 
-        ServerResponseEntity<List<String>> skuSaleAttrsResp = goodsFeignClient.getSkuSaleAttrs(skuId);
+        ServRespEntity<List<String>> skuSaleAttrsResp = goodsFeignClient.getSkuSaleAttrs(skuId);
         List<String> attrs = skuSaleAttrsResp.getData();
         cartItem.setSkuAttrValues(attrs);
 

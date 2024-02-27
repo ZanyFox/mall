@@ -1,9 +1,7 @@
 package com.fz.mall.coupon.service.impl;
 
 import cn.hutool.core.util.IdUtil;
-import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.fz.mall.api.feign.StockFeignClient;
 import com.fz.mall.api.goods.dto.SkuInfoDTO;
 import com.fz.mall.api.goods.feign.GoodsFeignClient;
 import com.fz.mall.common.config.JacksonConfiguration;
@@ -12,7 +10,7 @@ import com.fz.mall.common.redis.RedisCache;
 import com.fz.mall.common.redis.constant.SeckillCacheConstants;
 import com.fz.mall.common.redis.pojo.SeckillSkuCache;
 import com.fz.mall.common.resp.ResponseEnum;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.coupon.entity.SeckillSession;
 import com.fz.mall.coupon.entity.SeckillSkuRelation;
 import com.fz.mall.coupon.mapper.SeckillSessionMapper;
@@ -20,8 +18,6 @@ import com.fz.mall.coupon.pojo.SeckillSessionDTO;
 import com.fz.mall.coupon.service.SeckillSessionService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
-import org.redisson.api.RSemaphore;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -72,7 +68,7 @@ public class SeckillSessionServiceImpl extends ServiceImpl<SeckillSessionMapper,
         if (ObjectUtils.isEmpty(relationSkuIds))
             throw new MallServerException(ResponseEnum.SECKILL_SKU_NOT_EXIST_ERROR);
 
-        ServerResponseEntity<List<SkuInfoDTO>> skuInfosResp = goodsFeignClient.getSkuInfoByIds(relationSkuIds);
+        ServRespEntity<List<SkuInfoDTO>> skuInfosResp = goodsFeignClient.getSkuInfoByIds(relationSkuIds);
         List<SkuInfoDTO> skuInfos = skuInfosResp.getData();
 
         Map<Long, SkuInfoDTO> skuInfoMap = skuInfos.stream().collect(Collectors.toMap(SkuInfoDTO::getSkuId, (item) -> item));

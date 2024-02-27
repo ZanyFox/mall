@@ -1,6 +1,6 @@
 package com.fz.mall.coupon.controller.app;
 
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.coupon.service.SeckillSessionService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,8 +23,8 @@ public class SeckillSessionController {
     private final SeckillSessionService seckillSessionService;
 
     @PostMapping("/upload")
-    public ServerResponseEntity uploadSeckillSku() {
+    public ServRespEntity uploadSeckillSku() {
         seckillSessionService.uploadSeckillSku();
-        return ServerResponseEntity.success("上架秒杀商品成功");
+        return ServRespEntity.success("上架秒杀商品成功");
     }
 }

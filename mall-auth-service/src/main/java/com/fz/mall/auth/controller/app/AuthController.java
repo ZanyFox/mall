@@ -6,7 +6,7 @@ import com.fz.mall.api.user.feign.MemberFeignClient;
 import com.fz.mall.auth.pojo.param.UserRegisterParam;
 import com.fz.mall.auth.service.AuthService;
 import com.fz.mall.auth.service.RegisterService;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.common.resp.ResponseEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -34,30 +34,30 @@ public class AuthController {
     private RegisterService registerService;
 
     @PostMapping("/login")
-    public ServerResponseEntity login() {
+    public ServRespEntity login() {
 
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
 
     @PostMapping("/send-verification-code")
-    public ServerResponseEntity sendVerificationCode(String phoneNum) {
+    public ServRespEntity sendVerificationCode(String phoneNum) {
 
 
-        if (ObjectUtils.isEmpty(phoneNum)) return ServerResponseEntity.fail(ResponseEnum.PHONE_NUMBER_EMPTY);
+        if (ObjectUtils.isEmpty(phoneNum)) return ServRespEntity.fail(ResponseEnum.PHONE_NUMBER_EMPTY);
 
         if (!PhoneUtil.isMobile(phoneNum))
-            return ServerResponseEntity.fail(ResponseEnum.PHONE_NUMBER_FORMAT_ERROR);
+            return ServRespEntity.fail(ResponseEnum.PHONE_NUMBER_FORMAT_ERROR);
 
 
-        ServerResponseEntity<Boolean> mobileUnique = memberFeignClient.isMobileUnique(phoneNum);
-        if (!mobileUnique.getSuccess()) return ServerResponseEntity.fail(ResponseEnum.SERVER_INTERNAL_ERROR);
+        ServRespEntity<Boolean> mobileUnique = memberFeignClient.isMobileUnique(phoneNum);
+        if (!mobileUnique.getSuccess()) return ServRespEntity.fail(ResponseEnum.SERVER_INTERNAL_ERROR);
 
-        if (!mobileUnique.getData()) return ServerResponseEntity.fail(ResponseEnum.USER_REGISTER_MOBILE_EXIST);
+        if (!mobileUnique.getData()) return ServRespEntity.fail(ResponseEnum.USER_REGISTER_MOBILE_EXIST);
 
 
         authService.sendVerificationCode(phoneNum);
-        return ServerResponseEntity.success("验证码发送成功");
+        return ServRespEntity.success("验证码发送成功");
 
     }
 
@@ -65,10 +65,10 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ServerResponseEntity register(@Validated @RequestBody UserRegisterParam param) {
+    public ServRespEntity register(@Validated @RequestBody UserRegisterParam param) {
 
         registerService.register(param);
-        return ServerResponseEntity.success("注册成功！");
+        return ServRespEntity.success("注册成功！");
     }
 
 }

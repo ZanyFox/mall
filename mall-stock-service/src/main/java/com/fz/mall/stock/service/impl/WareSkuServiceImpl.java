@@ -13,7 +13,7 @@ import com.fz.mall.common.database.util.PageUtil;
 import com.fz.mall.common.exception.MallServerException;
 import com.fz.mall.common.pojo.vo.PageVO;
 import com.fz.mall.common.resp.ResponseEnum;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.stock.constant.StockLockStatus;
 import com.fz.mall.stock.mapper.WareOrderTaskDetailMapper;
 import com.fz.mall.stock.mapper.WareSkuMapper;
@@ -80,9 +80,9 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuMapper, WareSku> impl
             wareSku.setSkuId(item.getSkuId());
             wareSku.setWareId(item.getWareId());
             wareSku.setStockLocked(0);
-            ServerResponseEntity<SkuInfoDTO> serverResponseEntity = goodsFeignClient.getSkuInfoById(item.getSkuId());
-            if (Objects.equals(serverResponseEntity.getCode(), ResponseEnum.SUCCESS.getCode())) {
-                SkuInfoDTO skuInfoDTO = serverResponseEntity.getData();
+            ServRespEntity<SkuInfoDTO> servRespEntity = goodsFeignClient.getSkuInfoById(item.getSkuId());
+            if (Objects.equals(servRespEntity.getCode(), ResponseEnum.SUCCESS.getCode())) {
+                SkuInfoDTO skuInfoDTO = servRespEntity.getData();
                 wareSku.setSkuName(skuInfoDTO.getSkuName());
             }
 

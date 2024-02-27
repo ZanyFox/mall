@@ -1,7 +1,7 @@
 package com.fz.mall.gateway.filter;
 
 import com.alibaba.fastjson2.JSON;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.common.resp.ResponseEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -26,7 +26,6 @@ import reactor.core.publisher.Mono;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 @Slf4j
 @Component
@@ -90,7 +89,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
         ServerHttpResponse response = exchange.getResponse();
         response.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
-        DataBuffer dataBuffer = response.bufferFactory().wrap(JSON.toJSONBytes(ServerResponseEntity.fail(ResponseEnum.ACCESS_PERMISSION_ERROR)));
+        DataBuffer dataBuffer = response.bufferFactory().wrap(JSON.toJSONBytes(ServRespEntity.fail(ResponseEnum.ACCESS_PERMISSION_ERROR)));
         return response.writeWith(Mono.just(dataBuffer));
     }
 }

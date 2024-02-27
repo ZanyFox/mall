@@ -6,7 +6,7 @@ import com.fz.mall.common.data.vo.UserLoginVO;
 import com.fz.mall.common.feign.FeignInsideProperties;
 import com.fz.mall.common.pojo.dto.SimplePageDTO;
 import com.fz.mall.common.pojo.vo.PageVO;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,24 +20,24 @@ public interface MemberFeignClient {
 
 
     @GetMapping(FeignInsideProperties.FEIGN_PREFIX + "/user/member-level/list")
-    ServerResponseEntity<PageVO<MemberLevelDTO>> getMemberLevel(SimplePageDTO simplePageDTO);
+    ServRespEntity<PageVO<MemberLevelDTO>> getMemberLevel(SimplePageDTO simplePageDTO);
 
     @PostMapping(FeignInsideProperties.FEIGN_PREFIX + "/user/register")
-    ServerResponseEntity register(@RequestBody UserRegisterDTO userRegisterDTO);
+    ServRespEntity register(@RequestBody UserRegisterDTO userRegisterDTO);
 
     @GetMapping(FeignInsideProperties.FEIGN_PREFIX + "/user/isMobileValid")
-    ServerResponseEntity<Boolean> isMobileUnique(String mobile);
+    ServRespEntity<Boolean> isMobileUnique(String mobile);
 
 
     @PostMapping(FeignInsideProperties.FEIGN_PREFIX + "/user/login")
-    ServerResponseEntity<UserLoginVO> login(@RequestBody UserLoginDTO userLoginDTO);
+    ServRespEntity<UserLoginVO> login(@RequestBody UserLoginDTO userLoginDTO);
 
     @PostMapping(FeignInsideProperties.FEIGN_PREFIX + "/user/oauth-login")
-    ServerResponseEntity<UserLoginVO> oauthLogin(@RequestBody UserOauthLoginDTO userOauthLoginDTO);
+    ServRespEntity<UserLoginVO> oauthLogin(@RequestBody UserOauthLoginDTO userOauthLoginDTO);
 
     @GetMapping(FeignInsideProperties.FEIGN_PREFIX + "/user/currentUserAddr")
-    ServerResponseEntity<List<MemberReceiveAddressDTO>> getCurrentUserAddress();
+    ServRespEntity<List<MemberReceiveAddressDTO>> getCurrentUserAddress();
 
     @GetMapping(FeignInsideProperties.FEIGN_PREFIX + "/user/address/{addrId}")
-    ServerResponseEntity<MemberReceiveAddressDTO> getAddressById(@PathVariable("addrId") Long addrId);
+    ServRespEntity<MemberReceiveAddressDTO> getAddressById(@PathVariable("addrId") Long addrId);
 }

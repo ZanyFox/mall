@@ -3,7 +3,7 @@ package com.fz.mall.goods.controller.admin;
 import com.fz.mall.api.goods.constant.AttrEnum;
 import com.fz.mall.common.pojo.dto.SimplePageDTO;
 import com.fz.mall.common.pojo.vo.PageVO;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.goods.pojo.dto.AttrGroupRelationDTO;
 import com.fz.mall.goods.pojo.entity.Attr;
 import com.fz.mall.goods.pojo.entity.AttrAttrGroupRelation;
@@ -48,39 +48,39 @@ public class AdminAttrGroupController {
      * 如果categoryId为0则表示查询全部
      */
     @GetMapping("/list/{categoryId}")
-    public ServerResponseEntity page(@PathVariable Long categoryId, SimplePageDTO simplePageDTO) {
+    public ServRespEntity page(@PathVariable Long categoryId, SimplePageDTO simplePageDTO) {
         PageVO<AttrGroup> page = attrGroupService.page(categoryId, simplePageDTO);
-        return ServerResponseEntity.success(page);
+        return ServRespEntity.success(page);
     }
 
     @PostMapping
-    public ServerResponseEntity save(@RequestBody AttrGroup attrGroup) {
+    public ServRespEntity save(@RequestBody AttrGroup attrGroup) {
 
         attrGroupService.save(attrGroup);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     @PutMapping
-    public ServerResponseEntity update(@RequestBody AttrGroup attrGroup) {
+    public ServRespEntity update(@RequestBody AttrGroup attrGroup) {
 
         attrGroupService.updateById(attrGroup);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     @DeleteMapping
-    public ServerResponseEntity delete(@RequestBody Long[] ids) {
+    public ServRespEntity delete(@RequestBody Long[] ids) {
 
         attrGroupService.removeBatchByIds(Arrays.asList(ids));
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     @GetMapping("/info/{attrGroupId}")
-    public ServerResponseEntity getAttrGroupInfo(@PathVariable Long attrGroupId) {
+    public ServRespEntity getAttrGroupInfo(@PathVariable Long attrGroupId) {
 
         AttrGroup attrGroup = attrGroupService.getById(attrGroupId);
         Long[] categoryPath = categoryService.findCategoryPath(attrGroup.getCategoryId());
         attrGroup.setCategoryPath(categoryPath);
-        return ServerResponseEntity.success(attrGroup);
+        return ServRespEntity.success(attrGroup);
     }
 
     /**
@@ -89,9 +89,9 @@ public class AdminAttrGroupController {
      * @return
      */
     @GetMapping("/{attrGroupId}/attr/relation")
-    public ServerResponseEntity getAttrRelation(@PathVariable Long attrGroupId) {
+    public ServRespEntity getAttrRelation(@PathVariable Long attrGroupId) {
         List<Attr> attrs = attrGroupService.getGroupRelatedAttr(attrGroupId, AttrEnum.ALL);
-        return ServerResponseEntity.success(attrs);
+        return ServRespEntity.success(attrs);
     }
 
 
@@ -99,9 +99,9 @@ public class AdminAttrGroupController {
      * 获取当前分组没有关联的属性
      */
     @GetMapping("/{attrGroupId}/attr/no-relation")
-    public ServerResponseEntity getAttrWithoutRelation(@PathVariable Long attrGroupId, SimplePageDTO simplePageDTO) {
+    public ServRespEntity getAttrWithoutRelation(@PathVariable Long attrGroupId, SimplePageDTO simplePageDTO) {
         PageVO<Attr> noRelationAttr = attrGroupService.getNoRelationAttr(attrGroupId, simplePageDTO);
-        return ServerResponseEntity.success(noRelationAttr);
+        return ServRespEntity.success(noRelationAttr);
     }
 
     /**
@@ -110,25 +110,25 @@ public class AdminAttrGroupController {
      * @return
      */
     @GetMapping("/{categoryId}/attrs")
-    public ServerResponseEntity getAllAttrGroupWithAttrsByCategoryId(@PathVariable Long categoryId) {
+    public ServRespEntity getAllAttrGroupWithAttrsByCategoryId(@PathVariable Long categoryId) {
         List<AttrGroupWithAttrsVO> groupWithAttrs = attrGroupService.getAttrGroupWithAttrsByCategoryId(categoryId, AttrEnum.ALL);
-        return ServerResponseEntity.success(groupWithAttrs);
+        return ServRespEntity.success(groupWithAttrs);
     }
 
     @GetMapping("/{categoryId}/base-attrs")
-    public ServerResponseEntity getBaseAttrGroupWithAttrsByCategoryId(@PathVariable Long categoryId) {
+    public ServRespEntity getBaseAttrGroupWithAttrsByCategoryId(@PathVariable Long categoryId) {
         List<AttrGroupWithAttrsVO> groupWithAttrs = attrGroupService.getAttrGroupWithAttrsByCategoryId(categoryId, AttrEnum.ATTR_BASE);
-        return ServerResponseEntity.success(groupWithAttrs);
+        return ServRespEntity.success(groupWithAttrs);
     }
 
     @DeleteMapping("/attr/relation")
-    public ServerResponseEntity deleteAttrRelation(@RequestBody List<AttrGroupRelationDTO> relationDTOS) {
+    public ServRespEntity deleteAttrRelation(@RequestBody List<AttrGroupRelationDTO> relationDTOS) {
         attrGroupService.removeRelationBatch(relationDTOS);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     @PostMapping("/attr/relation")
-    public ServerResponseEntity saveAttrRelation(@RequestBody List<AttrGroupRelationDTO> relationDTOS) {
+    public ServRespEntity saveAttrRelation(@RequestBody List<AttrGroupRelationDTO> relationDTOS) {
 
         List<AttrAttrGroupRelation> relations = relationDTOS.stream().map(dto -> {
             AttrAttrGroupRelation relation = new AttrAttrGroupRelation();
@@ -137,7 +137,7 @@ public class AdminAttrGroupController {
         }).collect(Collectors.toList());
         attrAttrGroupRelationService.saveBatch(relations);
 
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
 

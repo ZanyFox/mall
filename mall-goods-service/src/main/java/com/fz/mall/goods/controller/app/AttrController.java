@@ -1,6 +1,6 @@
 package com.fz.mall.goods.controller.app;
 
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.goods.pojo.entity.ProductAttrValue;
 import com.fz.mall.goods.service.ProductAttrValueService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,17 +25,17 @@ public class AttrController {
     private ProductAttrValueService productAttrValueService;
 
     @GetMapping("/base/{spuId}")
-    public ServerResponseEntity listBaseSpuAttr(@PathVariable Long spuId) {
+    public ServRespEntity listBaseSpuAttr(@PathVariable Long spuId) {
 
         List<ProductAttrValue> productAttrValues = productAttrValueService.listBaseAttrById(spuId);
-        return ServerResponseEntity.success(productAttrValues);
+        return ServRespEntity.success(productAttrValues);
     }
 
     @PutMapping("/update/{spuId}")
-    public ServerResponseEntity updateSpuAttr(@PathVariable Long spuId, List<ProductAttrValue> productAttrValues) {
+    public ServRespEntity updateSpuAttr(@PathVariable Long spuId, List<ProductAttrValue> productAttrValues) {
 
         productAttrValueService.updateSpuAttr(spuId, productAttrValues);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
 }

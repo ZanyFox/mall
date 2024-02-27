@@ -3,7 +3,7 @@ package com.fz.mall.auth.service;
 import com.fz.mall.api.biz.feign.BizSMSFeignClient;
 import com.fz.mall.common.redis.constant.UserCacheConstants;
 import com.fz.mall.common.exception.MallServerException;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.common.resp.ResponseEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
@@ -37,7 +37,7 @@ public class AuthService {
 
         String code = codeCache == null ? String.valueOf(RandomUtils.nextInt(100000, 999999)) : codeCache.split("_")[0];
 
-        ServerResponseEntity<String> rpcResult = bizSMSFeignClient.sendVerificationCode(phoneNum, code);
+        ServRespEntity<String> rpcResult = bizSMSFeignClient.sendVerificationCode(phoneNum, code);
         if (!rpcResult.getSuccess()) {
             log.error("feign调用发送验证失败: {}", rpcResult.getMsg());
             throw new MallServerException(ResponseEnum.SEND_VERIFICATION_CODE_ERROR);

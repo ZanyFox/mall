@@ -20,5 +20,6 @@ spring:
           - data-id: application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
             group: DEFAULT_GROUP
             refresh: true
+        extension-configs:
   profiles:
     active: dev

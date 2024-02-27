@@ -3,7 +3,7 @@ package com.fz.mall.user.controller.app;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fz.mall.common.pojo.dto.SimplePageDTO;
 import com.fz.mall.common.database.util.PageUtil;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.user.entity.MemberLevel;
 import com.fz.mall.user.service.MemberLevelService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +20,9 @@ public class MemberLevelController {
     private MemberLevelService memberLevelService;
 
     @GetMapping("/list")
-    public ServerResponseEntity list(SimplePageDTO simplePageDTO) {
+    public ServRespEntity list(SimplePageDTO simplePageDTO) {
         Page<MemberLevel> page = memberLevelService.page(PageUtil.newPage(simplePageDTO));
-        return ServerResponseEntity.success(PageUtil.pageVO(page));
+        return ServRespEntity.success(PageUtil.pageVO(page));
     }
 
 }

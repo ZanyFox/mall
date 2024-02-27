@@ -2,7 +2,7 @@ package com.fz.mall.user;
 
 import com.fz.mall.api.user.dto.UserLoginDTO;
 import com.fz.mall.api.user.feign.MemberFeignClient;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.user.entity.UserOauth;
 import com.fz.mall.user.service.MemberService;
 import com.fz.mall.user.service.UserOauthService;
@@ -40,7 +40,7 @@ public class UserTests {
 //        UserLoginVO login = memberService.login(userLoginDTO);
 //        ServerResponseEntity<UserLoginVO> login = client.login(userLoginDTO);
 //        System.out.println(login);
-        ServerResponseEntity userAddress = client.getCurrentUserAddress();
+        ServRespEntity userAddress = client.getCurrentUserAddress();
         System.out.println(userAddress);
 
     }

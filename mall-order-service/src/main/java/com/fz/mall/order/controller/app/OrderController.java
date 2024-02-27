@@ -1,7 +1,7 @@
 package com.fz.mall.order.controller;
 
 import com.fz.mall.api.user.feign.MemberFeignClient;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.order.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +30,11 @@ public class OrderController {
     private MemberFeignClient memberFeignClient;
 
     @GetMapping("/list")
-    public ServerResponseEntity list() {
+    public ServRespEntity list() {
 
 //        ServerResponseEntity result = memberFeignClient.list();
 //        log.info("用户信息: {}", result.toString());
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
 }

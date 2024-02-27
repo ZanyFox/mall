@@ -23,7 +23,7 @@ import com.fz.mall.common.rabbitmq.constant.StockMqConstants;
 import com.fz.mall.common.rabbitmq.dto.SeckillOrderDTO;
 import com.fz.mall.common.redis.pojo.SeckillSkuCache;
 import com.fz.mall.common.resp.ResponseEnum;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.order.constant.OrderConstants;
 import com.fz.mall.order.entity.Order;
 import com.fz.mall.order.entity.OrderItem;
@@ -112,7 +112,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         OrderInfoVO orderInfoVO = new OrderInfoVO();
         CompletableFuture<Void> addressFuture = CompletableFuture.runAsync(() -> {
             RequestContextHolder.setRequestAttributes(requestAttributes);
-            ServerResponseEntity<List<MemberReceiveAddressDTO>> userAddress = memberFeignClient.getCurrentUserAddress();
+            ServRespEntity<List<MemberReceiveAddressDTO>> userAddress = memberFeignClient.getCurrentUserAddress();
             List<MemberReceiveAddressDTO> addresses = userAddress.getData();
             orderInfoVO.setMemberAddressVos(addresses);
         }, executor);
@@ -121,7 +121,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         CompletableFuture<Void> cartFuture = CompletableFuture.runAsync(() -> {
 
             RequestContextHolder.setRequestAttributes(requestAttributes);
-            ServerResponseEntity<List<CartItemDTO>> userCartItemsResp = cartFeignClient.getUserCheckedCartItems();
+            ServRespEntity<List<CartItemDTO>> userCartItemsResp = cartFeignClient.getUserCheckedCartItems();
             Map<Long, Boolean> hasStockMap = new HashMap<>();
             List<OrderItemInfoVO> orderItemInfoVOS = userCartItemsResp.getData().stream().map((item) -> {
                 OrderItemInfoVO orderItemInfoVo = new OrderItemInfoVO();
@@ -207,7 +207,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private List<OrderItem> lockStock(String orderSn) {
 
         // 获取购物车选中商品信息
-        ServerResponseEntity<List<CartItemDTO>> userCheckedCartItems = cartFeignClient.getUserCheckedCartItems();
+        ServRespEntity<List<CartItemDTO>> userCheckedCartItems = cartFeignClient.getUserCheckedCartItems();
         List<CartItemDTO> cartItems = userCheckedCartItems.getData();
 
         List<OrderItem> orderItems = cartItems.stream().map((cartItem) -> {
@@ -242,11 +242,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             lockStockDTO.setOrderSn(orderSn);
 
             lockStockDTO.setSkuQuantityDTOS(skuQuantityDTOS);
-            ServerResponseEntity serverResponseEntity = stockFeignClient.updateStockLock(lockStockDTO);
-            if (!serverResponseEntity.getSuccess()) {
-                log.error(serverResponseEntity.getMsg());
+            ServRespEntity servRespEntity = stockFeignClient.updateStockLock(lockStockDTO);
+            if (!servRespEntity.getSuccess()) {
+                log.error(servRespEntity.getMsg());
                 // 执行失败抛出异常 订单回滚
-                throw new MallServerException(ResponseEnum.getResponseEnumByCode(serverResponseEntity.getCode()));
+                throw new MallServerException(ResponseEnum.getResponseEnumByCode(servRespEntity.getCode()));
             }
         } catch (Exception e) {
             rabbitTemplate.convertAndSend(StockMqConstants.STOCK_EXCHANGE, StockMqConstants.UNLOCK_STOCK_ROUTING_KEY, orderSn);
@@ -261,7 +261,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (ObjectUtils.isEmpty(addrId)) {
             throw new MallServerException(ResponseEnum.DELIVERY_ADDRESS_INVALID);
         }
-        ServerResponseEntity<MemberReceiveAddressDTO> destAddrResp = memberFeignClient.getAddressById(addrId);
+        ServRespEntity<MemberReceiveAddressDTO> destAddrResp = memberFeignClient.getAddressById(addrId);
         return destAddrResp.getData();
     }
 

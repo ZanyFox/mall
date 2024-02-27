@@ -5,7 +5,7 @@ import com.fz.mall.api.user.feign.MemberFeignClient;
 import com.fz.mall.auth.pojo.param.UserRegisterParam;
 import com.fz.mall.common.redis.constant.UserCacheConstants;
 import com.fz.mall.common.exception.MallServerException;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.common.resp.ResponseEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class RegisterService {
         //            }
 
         try {
-            ServerResponseEntity result = memberFeignClient.register(userRegisterDTO);
+            ServRespEntity result = memberFeignClient.register(userRegisterDTO);
             log.info("结果信息: {}", result);
             if (!result.getSuccess()) {
                 ResponseEnum responseEnum = ResponseEnum.getResponseEnumByCode(result.getCode());

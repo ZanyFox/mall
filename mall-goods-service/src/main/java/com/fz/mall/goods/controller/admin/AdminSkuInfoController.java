@@ -2,7 +2,7 @@ package com.fz.mall.goods.controller.admin;
 
 import com.fz.mall.api.goods.dto.SkuInfoDTO;
 import com.fz.mall.common.pojo.vo.PageVO;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.goods.pojo.dto.SkuPageDTO;
 import com.fz.mall.goods.pojo.entity.SkuInfo;
 import com.fz.mall.goods.service.SkuInfoService;
@@ -28,17 +28,17 @@ public class AdminSkuInfoController {
 
 
     @GetMapping("/{skuId}")
-    public ServerResponseEntity getSkuInfoBySkuId(@PathVariable Long skuId) {
+    public ServRespEntity getSkuInfoBySkuId(@PathVariable Long skuId) {
         SkuInfo skuInfo = skuInfoService.getById(skuId);
         SkuInfoDTO skuInfoDTO = new SkuInfoDTO();
         BeanUtils.copyProperties(skuInfo, skuInfoDTO);
-        return ServerResponseEntity.success(skuInfoDTO);
+        return ServRespEntity.success(skuInfoDTO);
     }
 
     @GetMapping("/list")
-    public ServerResponseEntity list(SkuPageDTO skuDTO) {
+    public ServRespEntity list(SkuPageDTO skuDTO) {
         PageVO<SkuInfo> page = skuInfoService.page(skuDTO);
-        return ServerResponseEntity.success(page);
+        return ServRespEntity.success(page);
     }
 
 

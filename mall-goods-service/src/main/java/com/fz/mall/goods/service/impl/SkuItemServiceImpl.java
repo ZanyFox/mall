@@ -2,7 +2,7 @@ package com.fz.mall.goods.service.impl;
 
 import com.fz.mall.api.coupon.dto.SeckillSkuDTO;
 import com.fz.mall.api.coupon.feign.CouponFeignClient;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.goods.pojo.entity.SkuImages;
 import com.fz.mall.goods.pojo.entity.SkuInfo;
 import com.fz.mall.goods.pojo.entity.SpuInfoDesc;
@@ -12,7 +12,6 @@ import com.fz.mall.goods.service.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -79,7 +78,7 @@ public class SkuItemServiceImpl implements SkuItemService {
 
         CompletableFuture<Void> seckillSkuFuture = CompletableFuture.runAsync(() -> {
             RequestContextHolder.setRequestAttributes(requestAttributes);
-            ServerResponseEntity<SeckillSkuDTO> seckillInfoResp = couponFeignClient.getSkuSeckillInfo(skuId);
+            ServRespEntity<SeckillSkuDTO> seckillInfoResp = couponFeignClient.getSkuSeckillInfo(skuId);
             SeckillSkuDTO seckillSkuDTO = seckillInfoResp.getData();
             if (seckillSkuDTO != null) {
                 SeckillSkuVO seckillSkuVO = new SeckillSkuVO();

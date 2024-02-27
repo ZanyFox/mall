@@ -3,7 +3,7 @@ package com.fz.mall.cart.controller.app;
 import com.fz.mall.cart.model.CartItem;
 import com.fz.mall.cart.service.CartService;
 import com.fz.mall.common.resp.ResponseEnum;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,21 +18,21 @@ public class CartController {
 
 
     @PostMapping("/addCartItem")
-    public ServerResponseEntity add(@RequestParam("skuId") Long skuId, @RequestParam("num") Integer num) {
+    public ServRespEntity add(@RequestParam("skuId") Long skuId, @RequestParam("num") Integer num) {
 
         if (num <= 0)
-            return ServerResponseEntity.fail(ResponseEnum.PURCHASE_QUANTITY_ERROR);
+            return ServRespEntity.fail(ResponseEnum.PURCHASE_QUANTITY_ERROR);
 
         CartItem cartItem = cartService.addCartItem(skuId, num);
-        return ServerResponseEntity.success(cartItem);
+        return ServRespEntity.success(cartItem);
     }
 
 
     @PostMapping("update")
-    public ServerResponseEntity changeChecked(@RequestBody List<Long> skuIds) {
+    public ServRespEntity changeChecked(@RequestBody List<Long> skuIds) {
 
         cartService.updateChecked(skuIds);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 }
 

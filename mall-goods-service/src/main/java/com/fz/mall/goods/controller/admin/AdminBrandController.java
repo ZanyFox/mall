@@ -2,7 +2,7 @@ package com.fz.mall.goods.controller.admin;
 
 import com.fz.mall.common.pojo.dto.SimplePageDTO;
 import com.fz.mall.common.pojo.vo.PageVO;
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.goods.pojo.entity.Brand;
 import com.fz.mall.goods.service.BrandService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,35 +21,35 @@ public class AdminBrandController {
 
 
     @GetMapping("/list")
-    public ServerResponseEntity list(SimplePageDTO simplePageDTO) {
+    public ServRespEntity list(SimplePageDTO simplePageDTO) {
         PageVO<Brand> page = brandService.page(simplePageDTO);
-        return ServerResponseEntity.success(page);
+        return ServRespEntity.success(page);
     }
 
     @GetMapping("/{brandId}")
-    public ServerResponseEntity<Brand> info(@PathVariable("brandId") Long brandId) {
+    public ServRespEntity<Brand> info(@PathVariable("brandId") Long brandId) {
 
         Brand brand = brandService.getById(brandId);
-        return ServerResponseEntity.success(brand);
+        return ServRespEntity.success(brand);
     }
 
     @PostMapping
-    public ServerResponseEntity save(@RequestBody Brand brand) {
+    public ServRespEntity save(@RequestBody Brand brand) {
         brandService.save(brand);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     @PutMapping
-    public ServerResponseEntity update(@RequestBody Brand brand) {
+    public ServRespEntity update(@RequestBody Brand brand) {
         brandService.updateDetail(brand);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     @DeleteMapping
-    public ServerResponseEntity delete(@RequestBody Long[] ids) {
+    public ServRespEntity delete(@RequestBody Long[] ids) {
         log.info(Arrays.toString(ids));
         brandService.removeBatchByIds(Arrays.asList(ids));
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
 }

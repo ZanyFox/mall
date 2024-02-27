@@ -1,6 +1,6 @@
 package com.fz.mall.goods.controller.admin;
 
-import com.fz.mall.common.resp.ServerResponseEntity;
+import com.fz.mall.common.resp.ServRespEntity;
 import com.fz.mall.goods.pojo.entity.Category;
 import com.fz.mall.goods.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,36 +26,36 @@ public class AdminCategoryController {
 
 
     @GetMapping("/list")
-    public ServerResponseEntity<?> list() {
+    public ServRespEntity<?> list() {
         List<Category> categories = categoryService.listAll();
-        return ServerResponseEntity.success(categories);
+        return ServRespEntity.success(categories);
     }
 
     @GetMapping("/info/{id}")
-    public ServerResponseEntity<?> info(@PathVariable Long id) {
+    public ServRespEntity<?> info(@PathVariable Long id) {
         Category category = categoryService.getById(id);
-        return ServerResponseEntity.success(category);
+        return ServRespEntity.success(category);
     }
 
     @PostMapping("/delete")
-    public ServerResponseEntity<Void> delete(@RequestBody Long[] ids) {
+    public ServRespEntity<Void> delete(@RequestBody Long[] ids) {
         categoryService.removeCategoryByIds(Arrays.asList(ids));
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
 
 
     @PostMapping("/save")
-    public ServerResponseEntity<Void> save(@RequestBody Category category) {
+    public ServRespEntity<Void> save(@RequestBody Category category) {
         categoryService.save(category);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     @PostMapping("/update")
-    public ServerResponseEntity<Void> update(@RequestBody Category category) {
+    public ServRespEntity<Void> update(@RequestBody Category category) {
 
         categoryService.updateCascade(category);
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 
     /**
@@ -64,8 +64,8 @@ public class AdminCategoryController {
      * @return
      */
     @PostMapping("/update/sort")
-    public ServerResponseEntity updateSort(@RequestBody Category[] categories) {
+    public ServRespEntity updateSort(@RequestBody Category[] categories) {
         categoryService.updateBatchById(Arrays.asList(categories));
-        return ServerResponseEntity.success();
+        return ServRespEntity.success();
     }
 }
